@@ -1,4 +1,4 @@
-version: '3.8'
+# version: '3.8' --the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion
 
 services:
   time-tracker:
@@ -11,5 +11,5 @@ services:
       - ./app:/app
       - ./data:/app/data
     env_file:
-      - .env
+      - ./app/.env
     restart: unless-stopped

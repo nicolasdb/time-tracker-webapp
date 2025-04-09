@@ -6,6 +6,14 @@ import logging
 import streamlit as st
 from dotenv import load_dotenv
 
+# Import components
+from components.sidebar import display_sidebar
+from components.questions import display_configuration_questions
+from components.results import display_test_results
+
+# Import utils
+from utils.data_loader import test_connection
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -22,12 +30,20 @@ def init_environment():
     if not supabase_url or not supabase_key:
         st.warning("⚠️ Supabase configuration not found. Some features may be limited.")
         logger.warning("Supabase environment variables not set")
+        return False
+    
+    # Test connection
+    connection_ok = test_connection()
+    st.session_state["connection_ok"] = connection_ok
+    
+    if not connection_ok:
+        st.warning("⚠️ Could not connect to Supabase. Please check your configuration.")
+        logger.warning("Failed to connect to Supabase")
+    
+    return connection_ok
 
 def main():
     """Main function to run the Streamlit application."""
-    # Initialize environment
-    init_environment()
-    
     # Page config
     st.set_page_config(
         page_title="Time Tracker",
@@ -36,14 +52,37 @@ def main():
     )
     
     try:
-        # Main title with description
-        st.title("⏱️ Time Tracker")
-        st.markdown("""
-            Track your time on different projects and tasks to improve productivity.
-        """)
+        # Display sidebar and get selected page
+        selected_page = display_sidebar()
         
-        # Placeholder for app content
-        st.info("This application is under development.")
+        # Initialize environment
+        init_environment()
+        
+        # Main content area
+        if selected_page == "Dashboard":
+            # Main title with description
+            st.title("⏱️ Time Tracker Dashboard")
+            st.markdown("""
+                Track your time on different projects and tasks to improve productivity.
+            """)
+            
+            # Display test results for Stage 1 validation
+            display_test_results()
+            
+        elif selected_page == "Track Time":
+            st.title("🕒 Track Time")
+            st.info("Time tracking functionality will be implemented in a future stage.")
+            
+        elif selected_page == "Projects":
+            st.title("📁 Projects")
+            st.info("Project management functionality will be implemented in a future stage.")
+            
+        elif selected_page == "Reports":
+            st.title("📊 Reports")
+            st.info("Reporting functionality will be implemented in a future stage.")
+            
+        # Display configuration questions at the bottom
+        display_configuration_questions()
             
     except Exception as e:
         logger.error(f"Application error: {str(e)}", exc_info=True)

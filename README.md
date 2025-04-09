@@ -9,12 +9,22 @@ A streamlit-based web application for tracking time spent on projects and tasks.
 - Generate reports on time usage
 - Help improve personal and team productivity
 
-## Features (Planned)
+## Features
 
+### Implemented
+1. **Supabase Integration**: Connection to Supabase database for data storage
+2. **Data Visualization**: Display and visualize time tracking data
+3. **Dashboard**: Basic UI for viewing time allocation
+
+### Planned
 1. **Time Tracking**: Start/stop timers, manual time entry, task categorization
 2. **Projects Management**: Create and organize projects and tasks
-3. **Reporting**: Visual charts and reports of time allocation
+3. **Advanced Reporting**: Detailed visual charts and reports of time allocation
 4. **Export**: Export data in various formats (CSV, PDF)
+
+## Current Status
+✅ Stage 1: Foundation completed - Basic Streamlit + Supabase integration
+🔄 Stage 2: Data Management Interface - In planning
 
 ## Contributing
 
