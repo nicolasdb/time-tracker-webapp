@@ -28,6 +28,7 @@ ENV/
 # Environment Variables
 .env
 .env.*
+.mcp.*
 
 # IDE
 .idea/
@@ -49,3 +50,4 @@ Thumbs.db
 
 # old references
 reference/
+**/CLAUDE.local.md

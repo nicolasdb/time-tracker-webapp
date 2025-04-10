@@ -7,6 +7,12 @@ import streamlit as st
 # Configure logging
 logger = logging.getLogger(__name__)
 
+def set_nav_callback():
+    """Callback when sidebar navigation changes"""
+    # This will be triggered automatically when the radio button value changes
+    # because we're using the key="navigation" parameter
+    # No action needed here - st.session_state.navigation is already updated
+
 def display_sidebar():
     """
     Display sidebar with navigation and options.
@@ -14,22 +20,31 @@ def display_sidebar():
     with st.sidebar:
         st.title("⏱️ Time Tracker")
         
-        # Add navigation
+        # Get navigation options
+        nav_options = ["Dashboard", "Track Time", "Tag Management", "Device Management", "Projects", "Reports"]
+        
+        # Initialize navigation state if not present
+        if "navigation" not in st.session_state:
+            st.session_state.navigation = "Dashboard"
+        
+        # Find the index of the current selection
+        try:
+            current_idx = nav_options.index(st.session_state.navigation)
+        except ValueError:
+            current_idx = 0
+        
+        # Add navigation with key for callback handling
         selected = st.radio(
             "Navigation",
-            ["Dashboard", "Track Time", "Projects", "Reports"],
-            index=0
+            nav_options,
+            index=current_idx,
+            key="navigation"
         )
         
         st.divider()
         
-        # Settings section
-        with st.expander("Settings"):
-            st.checkbox("Dark mode")
-            st.selectbox("Time format", ["12-hour", "24-hour"])
-        
         # About section
         st.markdown("---")
-        st.markdown("v0.1.0 | [Documentation](https://github.com/yourrepo)")
+        st.markdown("v0.2.0 | Time Tracker")
         
-    return selected
+    # No need to return anything since we're using session state for navigation
