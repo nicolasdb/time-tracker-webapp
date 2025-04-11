@@ -1,8 +1,10 @@
 """
 Sidebar component for the time tracker application.
 """
+import os
 import logging
 import streamlit as st
+from utils.auth import get_current_user, get_current_user_email, sign_out
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -20,31 +22,62 @@ def display_sidebar():
     with st.sidebar:
         st.title("⏱️ Time Tracker")
         
-        # Get navigation options
-        nav_options = ["Dashboard", "Track Time", "Tag Management", "Device Management", "Projects", "Reports"]
+        # Check authentication state from session state directly
+        is_authenticated = st.session_state.auth.get("authenticated", False)
         
-        # Initialize navigation state if not present
-        if "navigation" not in st.session_state:
-            st.session_state.navigation = "Dashboard"
-        
-        # Find the index of the current selection
-        try:
-            current_idx = nav_options.index(st.session_state.navigation)
-        except ValueError:
-            current_idx = 0
-        
-        # Add navigation with key for callback handling
-        selected = st.radio(
-            "Navigation",
-            nav_options,
-            index=current_idx,
-            key="navigation"
-        )
-        
-        st.divider()
+        if is_authenticated:
+            # User info section
+            user_email = get_current_user_email() or 'User'
+            st.markdown(f"👤 **{user_email}**")
+            
+            # Add debug information in case we have issues
+            if os.getenv("DEBUG_MODE") == "True":
+                st.caption(f"Auth token (first 8 chars): {st.session_state.auth.get('access_token', '')[:8]}...")
+                if "_auth" in st.query_params:
+                    st.caption(f"URL token: {st.query_params['_auth'][:8]}...")
+            
+            # Get navigation options
+            nav_options = ["Dashboard", "Track Time", "Tag Management", "Device Management", "Projects", "Reports", "Webhook Test"]
+            
+            # Initialize navigation state if not present
+            if "navigation" not in st.session_state:
+                st.session_state.navigation = "Dashboard"
+            
+            # Find the index of the current selection
+            try:
+                current_idx = nav_options.index(st.session_state.navigation)
+            except ValueError:
+                current_idx = 0
+            
+            # Add navigation with key for callback handling
+            selected = st.radio(
+                "Navigation",
+                nav_options,
+                index=current_idx,
+                key="navigation"
+            )
+            
+            st.divider()
+            
+            # Sign out button
+            if st.button("Sign Out"):
+                success, error = sign_out()
+                if success:
+                    # Don't try to modify navigation directly
+                    # Instead, set a flag that will be checked in streamlit_app.py
+                    st.session_state["signed_out"] = True
+                    st.rerun()
+                else:
+                    st.error(f"Failed to sign out: {error}")
+        else:
+            # If not authenticated, just show login options in the sidebar
+            st.warning("You must log in to access the application")
+            if "navigation" not in st.session_state or st.session_state.navigation != "Login":
+                # Just set navigation directly - no rerun needed
+                st.session_state.navigation = "Login"
         
         # About section
         st.markdown("---")
-        st.markdown("v0.2.0 | Time Tracker")
+        st.markdown("v0.3.0 | Time Tracker")
         
     # No need to return anything since we're using session state for navigation

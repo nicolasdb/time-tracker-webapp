@@ -1,6 +1,6 @@
 # Time Tracker Webapp
 
-A streamlit-based web application for tracking time spent on projects and tasks.
+A web application for tracking time spent on projects and tasks with NFC readers.
 
 ## Purpose
 
@@ -19,17 +19,33 @@ A streamlit-based web application for tracking time spent on projects and tasks.
 5. **Device Management**: CRUD operations for NFC reader devices
 6. **Time Tracking**: View time blocks and raw RFID events by day
 7. **Reflection Triggers**: Designate tags that trigger reflections
+8. **Webhook Service**: Receive and process device events
+9. **User Authentication**: Secure login and user-specific data
+10. **Row Level Security**: Data isolation and protection by user
 
 ### Planned
-1. **Webhook Service**: Receive and process device events
-2. **User Authentication**: Secure login and user-specific data
-3. **Advanced Reporting**: Detailed visual charts and reports of time allocation
-4. **Export**: Export data in various formats (CSV, PDF)
+1. **Advanced Reporting**: Detailed visual charts and reports of time allocation
+2. **Export**: Export data in various formats (CSV, PDF)
+3. **Reflection Processing**: AI-generated insights based on time tracking data
 
 ## Current Status
 ✅ Stage 1: Foundation - Basic Streamlit + Supabase integration
 ✅ Stage 2: Data Management Interface - Tag and device management, time tracking
-🔄 Stage 3: Webhook Implementation & Authentication - In planning
+✅ Stage 3: Webhook Implementation & Authentication - Webhook API, user auth, and RLS
+🔄 Stage 4: Time Visualization Dashboard - In planning
+
+## Services
+
+The application consists of two services running in the same container:
+
+1. **Streamlit UI** - Web interface for managing tags, devices, and viewing time data
+   - Runs on port 8501
+   - Accessible at http://localhost:8501
+
+2. **Webhook API** - FastAPI service for receiving device events
+   - Runs on port 8000
+   - Webhook endpoint at http://localhost:8000/api/webhook/device-event
+   - Health check at http://localhost:8000/api/health
 
 ## Contributing
 
@@ -45,13 +61,15 @@ Interested in contributing? Please see our [CONTRIBUTING.md](CONTRIBUTING.md) fo
    docker compose up --build
    ```
 
-4. Access the application at `http://localhost:8501`
+4. Access the UI at `http://localhost:8501`
+5. Access the webhook at `http://localhost:8000/api/webhook/device-event`
 
 ## Documentation
 
 - [SETUP.md](SETUP.md) - Detailed deployment and configuration guide
 - [CONTRIBUTING.md](CONTRIBUTING.md) - Development and contribution guidelines
 - [TECHNICAL.md](TECHNICAL.md) - Technical architecture and implementation details
+- [WEBHOOK.md](WEBHOOK.md) - Webhook API documentation and device integration guide
 
 ## License
 
@@ -59,4 +77,4 @@ Interested in contributing? Please see our [CONTRIBUTING.md](CONTRIBUTING.md) fo
 >
 > This project is licensed under the Apache License 2.0. See the LICENSE file for details.
 
-Please note that this project uses Docker and Streamlit, which are licensed under their respective licenses.
+Please note that this project uses Docker, Streamlit, and FastAPI, which are licensed under their respective licenses.

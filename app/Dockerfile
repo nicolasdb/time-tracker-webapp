@@ -2,11 +2,23 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy application code
 COPY . .
 
-EXPOSE 8501
+# Make entrypoint script executable
+RUN chmod +x /app/entrypoint.sh
 
-CMD ["streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+# Expose ports for both services
+EXPOSE 8501 8000
+
+# Use entrypoint script to start both services
+ENTRYPOINT ["/app/entrypoint.sh"]

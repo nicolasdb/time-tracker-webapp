@@ -12,9 +12,11 @@ from components.questions import display_configuration_questions
 from components.tag_management import display_tag_management
 from components.device_management import display_device_management
 from components.time_tracking import display_time_tracking
+from components.webhook_test import display_webhook_test
 
 # Import utils
 from utils.data_loader import test_connection
+from utils.auth import initialize_auth, display_login_form, ensure_authenticated
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -54,14 +56,64 @@ def main():
     )
     
     try:
+        # Check for redirect flags
+        if st.session_state.get("signed_out", False):
+            # Clear the flag
+            del st.session_state["signed_out"]
+            # Set navigation to Login before rendering the sidebar
+            if "navigation" in st.session_state:
+                st.session_state.navigation = "Login"
+            logger.info("User signed out, redirecting to Login page")
+        
+        # Just handle the signed_out flag, no more redirect flags
+        # This simplifies the logic and prevents redirect loops
+        
+        # Clear any stale redirect flags that might be in the session state
+        # to completely break any existing loops
+        if "redirect_to_login" in st.session_state:
+            del st.session_state["redirect_to_login"]
+        if "auth_redirect_to_login" in st.session_state:
+            del st.session_state["auth_redirect_to_login"]
+        if "redirect_count" in st.session_state:
+            del st.session_state["redirect_count"]
+        
+        # Initialize environment and authentication
+        init_environment()
+        
+        # Log authentication state before initialization
+        logger.debug(f"Before initialize_auth(): Auth state exists: {'auth' in st.session_state}")
+        if 'auth' in st.session_state:
+            logger.debug(f"Before initialize_auth(): Authenticated: {st.session_state.auth.get('authenticated', False)}")
+        
+        # Initialize authentication
+        initialize_auth()
+        
+        # Log authentication state after initialization
+        logger.debug(f"After initialize_auth(): Authenticated: {st.session_state.auth.get('authenticated', False)}")
+        if st.session_state.auth.get('authenticated', False):
+            logger.debug(f"After initialize_auth(): User: {st.session_state.auth.get('user')}")
+        
         # Display sidebar and get selected page
         display_sidebar()
         selected_page = st.session_state.navigation
         
-        # Initialize environment
-        init_environment()
+        # Log current navigation
+        logger.debug(f"Current navigation: {selected_page}")
         
-        # Main content area
+        # Handle login page separately
+        if selected_page == "Login":
+            logger.debug("Showing login form")
+            display_login_form()
+            return
+        
+        # Main content area - require authentication for all other pages
+        logger.debug("Checking authentication for protected page")
+        if not ensure_authenticated():
+            logger.debug("Authentication check failed, handling in ensure_authenticated")
+            # Important: do NOT rerun here - just show the login page
+            display_login_form()
+            return
+            
         if selected_page == "Dashboard":
             # Main title with description
             st.title("⏱️ Time Tracker Dashboard")
@@ -96,7 +148,7 @@ def main():
             # Display navigation cards
             st.write("### Quick Actions")
             
-            col1, col2, col3 = st.columns(3)
+            col1, col2, col3, col4 = st.columns(4)
             
             with col1:
                 st.info("##### Manage Tags")
@@ -120,6 +172,14 @@ def main():
                 if st.button("Open Reports", key="goto_reports"):
                     # Set session state and rerun to navigate
                     st.session_state.navigation = "Reports"
+                    st.rerun()
+                    
+            with col4:
+                st.info("##### Webhook Test")
+                st.markdown("Test and configure the webhook service")
+                if st.button("Open Webhook Test", key="goto_webhook"):
+                    # Set session state and rerun to navigate
+                    st.session_state.navigation = "Webhook Test"
                     st.rerun()
             
         elif selected_page == "Track Time":
@@ -152,6 +212,9 @@ def main():
         elif selected_page == "Reports":
             st.title("📊 Reports")
             st.info("Reporting functionality will be implemented in a future stage.")
+            
+        elif selected_page == "Webhook Test":
+            display_webhook_test()
             
         # Optional debugging information
         if os.getenv("DEBUG_MODE") == "True":

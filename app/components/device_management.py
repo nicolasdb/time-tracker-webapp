@@ -65,6 +65,15 @@ def create_update_device(device_data: Dict[str, Any], device_id: Optional[str] =
         return False
     
     try:
+        # Get the current user ID for device ownership
+        from utils.auth import get_current_user_id
+        user_id = get_current_user_id()
+        
+        # Add user_id to device data if we have one
+        if user_id and 'user_id' not in device_data:
+            device_data['user_id'] = user_id
+            logger.info(f"Adding user_id {user_id} to device data")
+        
         if device_id:
             # Update existing device
             response = supabase.table('device_assignments').update(device_data).eq('device_id', device_id).execute()
@@ -75,7 +84,7 @@ def create_update_device(device_data: Dict[str, Any], device_id: Optional[str] =
             # Create new device
             response = supabase.table('device_assignments').insert(device_data).execute()
             if response.data:
-                logger.info(f"Created new device: {device_data['device_id']}")
+                logger.info(f"Created new device: {device_data['device_id']} for user: {device_data.get('user_id', 'None')}")
                 return True
         
         return False

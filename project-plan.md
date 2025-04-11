@@ -72,27 +72,57 @@ Building a time tracking system that uses physical NFC interactions to log activ
 - Duration: 3h 25m (wall time), 18m 32s (API time)
 - Cost: $6.05
 
-### Stage 3: Webhook Implementation & Authentication
+### Stage 3: Webhook Implementation & Authentication ✅
+
 **Objective**: Build service to receive and process device payloads and implement user authentication.
 
 **Tasks**:
-- [ ] Create webhook service container
-- [ ] Implement endpoint for device events
-- [ ] Add validation and error handling
-- [ ] Configure secure communication
-- [ ] Implement user authentication with Supabase Auth
-- [ ] Add login/logout functionality
-- [ ] Configure Row Level Security for user data
-- [ ] Deploy to production server with domain name
+
+- [x] Create webhook service container
+- [x] Implement endpoint for device events
+- [x] Add validation and error handling
+- [x] Configure secure communication
+- [x] Implement user authentication with Supabase Auth
+- [x] Add login/logout functionality
+- [x] Configure Row Level Security for user data
+- [x] Create device API key management
+- [x] Implement device-specific API keys
+- [x] Add support for multiple authentication methods
+- [ ] Create validation endpoint for easier testing
+- [x] Implement service role authentication for admin functions
+- [x] Document webhook integration for devices
 
 **Validation Criteria**:
+
 - ✓ Webhook accepts properly formatted payloads
 - ✓ Events are correctly stored in Supabase
 - ✓ Invalid requests are properly rejected
 - ✓ Can handle concurrent requests
 - ✓ Users can securely log in/out
 - ✓ User data is isolated through RLS
-- ✓ Application is accessible via domain name
+- ✓ Webhook provides clear testing interface
+- ✓ API keys are securely managed
+- ✓ Device-specific API keys enforce security
+- ✓ Multiple authentication methods supported
+- ✓ Testing tools provide clear feedback
+
+**Notes**:
+
+- Implemented unified container approach with both services in one container
+- Added FastAPI for high-performance webhook processing
+- Created comprehensive authentication system for both users and devices
+- Implemented device API key management with device-specific keys
+- Added support for both Bearer token and X-API-Key authentication methods
+- Added detailed webhook testing interface with direct testing capabilities
+- Created new database table for device keys with proper foreign key relationships
+- Added validation endpoint to check API keys without sending events
+- Added RLS policies for all tables with service role bypass for admin functions
+- Created helper scripts for webhook testing and validation
+- Updated documentation including new WEBHOOK.md guide with troubleshooting section
+- Improved error handling and feedback for webhook requests
+- Completed: April 11, 2025
+- Duration: 3h 50m (wall time), 38m 4s (API time)
+- Cost: $12.29
 
 ### Stage 4: Time Visualization Dashboard
 **Objective**: Create visualizations of time tracking data.

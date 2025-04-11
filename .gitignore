@@ -29,6 +29,8 @@ ENV/
 .env
 .env.*
 .mcp.*
+data/.auth_session 
+
 
 # IDE
 .idea/
