@@ -13,6 +13,7 @@ services:
       - ./data:/app/data
     env_file:
       - ./app/.env
+      -  stack.env
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]

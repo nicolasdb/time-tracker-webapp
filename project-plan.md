@@ -122,7 +122,7 @@ Building a time tracking system that uses physical NFC interactions to log activ
 - Improved error handling and feedback for webhook requests
 - Completed: April 11, 2025
 - Duration: 3h 50m (wall time), 38m 4s (API time)
-- Cost: $12.29
+- Cost: $14.29
 
 ### Stage 4: Time Visualization Dashboard
 **Objective**: Create visualizations of time tracking data.
