@@ -11,8 +11,8 @@ services:
     volumes:
       - ./app:/app
       - ./data:/app/data
-    # env_file:
-    #   - ./app/.env
+    env_file:
+      - ./app/.env
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
