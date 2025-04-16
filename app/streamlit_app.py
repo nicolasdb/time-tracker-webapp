@@ -12,7 +12,6 @@ from components.questions import display_configuration_questions
 from components.tag_management import display_tag_management
 from components.device_management import display_device_management
 from components.time_tracking import display_time_tracking
-from components.webhook_test import display_webhook_test
 
 # Import utils
 from utils.data_loader import test_connection
@@ -172,16 +171,8 @@ def main():
                 if st.button("Open Reports", key="goto_reports"):
                     # Set session state and rerun to navigate
                     st.session_state.navigation = "Reports"
-                    st.rerun()
-                    
-            with col4:
-                st.info("##### Webhook Test")
-                st.markdown("Test and configure the webhook service")
-                if st.button("Open Webhook Test", key="goto_webhook"):
-                    # Set session state and rerun to navigate
-                    st.session_state.navigation = "Webhook Test"
-                    st.rerun()
-            
+                    st.rerun()                    
+           
         elif selected_page == "Track Time":
             st.title("🕒 Track Time")
             st.markdown("""
@@ -212,9 +203,6 @@ def main():
         elif selected_page == "Reports":
             st.title("📊 Reports")
             st.info("Reporting functionality will be implemented in a future stage.")
-            
-        elif selected_page == "Webhook Test":
-            display_webhook_test()
             
         # Optional debugging information
         if os.getenv("DEBUG_MODE") == "True":

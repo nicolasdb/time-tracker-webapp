@@ -14,11 +14,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . .
 
-# Make entrypoint script executable
-RUN chmod +x /app/entrypoint.sh
+# Expose ports for streamlit
+EXPOSE 8501
 
-# Expose ports for both services
-EXPOSE 8501 8000
-
-# Use entrypoint script to start both services
-ENTRYPOINT ["/app/entrypoint.sh"]
+# Use CMD to start Streamlit directly
+CMD ["streamlit", "run", "streamlit_app.py"]

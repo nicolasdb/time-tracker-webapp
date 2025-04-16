@@ -5,18 +5,12 @@ services:
     build:
       context: ./app
       dockerfile: Dockerfile
+    container_name: time-tracker
     ports:
       - "8501:8501"  # Streamlit UI
-      - "8000:8000"  # FastAPI webhook
     volumes:
       - ./app:/app
       - ./data:/app/data
     env_file:
       - ./app/.env
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 15s

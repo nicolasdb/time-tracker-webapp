@@ -37,7 +37,7 @@ def display_sidebar():
                     st.caption(f"URL token: {st.query_params['_auth'][:8]}...")
             
             # Get navigation options
-            nav_options = ["Dashboard", "Track Time", "Tag Management", "Device Management", "Projects", "Reports", "Webhook Test"]
+            nav_options = ["Dashboard", "Track Time", "Tag Management", "Device Management", "Projects", "Reports"]
             
             # Initialize navigation state if not present
             if "navigation" not in st.session_state:
