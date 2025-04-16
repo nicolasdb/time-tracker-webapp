@@ -5,14 +5,17 @@ This document provides instructions for setting up and running the Time Tracker 
 ## Environment Setup
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/yourusername/time-tracker-webapp.git
    cd time-tracker-webapp
    ```
 
 2. **Create a .env file**
+
    Create a `.env` file in the `app` directory with the following variables:
-   ```
+
+   ```.env
    # Required Supabase credentials
    SUPABASE_URL=your_supabase_url
    SUPABASE_KEY=your_supabase_key
@@ -20,10 +23,8 @@ This document provides instructions for setting up and running the Time Tracker 
    
    # Optional environment variables
    DEBUG_MODE=False  # Set to True to enable debug features
-   WEBHOOK_DOMAIN=localhost:8000  # Used for generating webhook URLs
-   WEBHOOK_PORT=8000  # Port for the FastAPI webhook service
    ```
-   
+
    > **IMPORTANT**: The service role key is required to bypass Row Level Security (RLS) policies in Supabase. Without it, you may not see any data even if it exists in the database.
 
 ## Supabase Setup
@@ -46,7 +47,7 @@ This document provides instructions for setting up and running the Time Tracker 
 
 3. **Set up Authentication**
    - In the Supabase dashboard, go to Authentication > Settings
-   - Configure the Site URL to match your deployment URL (e.g., http://localhost:8501)
+   - Configure the Site URL to match your deployment URL (e.g., `http://localhost:8501`)
    - Configure any additional authentication providers if needed
 
 ## Running the Application
@@ -57,33 +58,30 @@ This document provides instructions for setting up and running the Time Tracker 
 docker compose up --build
 ```
 
-This will start both services:
-- Streamlit UI: http://localhost:8501
-- Webhook API: http://localhost:8000/api/webhook/device-event
-  - Health check endpoint: http://localhost:8000/api/health
+This will start the Streamlit UI:
+
+- Streamlit UI: `http://localhost:8501`
 
 ### Local Development
 
 1. **Install dependencies**
+
    ```bash
    pip install -r app/requirements.txt
    ```
 
-2. **Run both services (using the entrypoint script)**
+2. **Run the service (using the entrypoint script)**
+
    ```bash
    cd app
    chmod +x entrypoint.sh
    ./entrypoint.sh
    ```
 
-3. **Or run services individually**
-   ```bash
-   # In one terminal
-   streamlit run app/streamlit_app.py
+3. **Or run the service individually**
 
-   # In another terminal
-   cd app
-   python -m uvicorn webhook_server:app --host 0.0.0.0 --port 8000 --reload
+   ```bash
+   streamlit run app/streamlit_app.py
    ```
 
 ## Creating a Test User
@@ -113,9 +111,8 @@ The implementation can be validated by:
 
 1. Successfully logging in with a Supabase user account
 2. Viewing and managing tags and devices specific to the logged-in user
-3. Sending test webhook events and seeing them appear in the time tracking view
-4. Creating API keys and testing authentication
-5. Verifying that both services (Streamlit and FastAPI) are running
+3. Seeing data appear in the time tracking view
+4. Verifying that the Streamlit service is running
 
 ## Troubleshooting
 

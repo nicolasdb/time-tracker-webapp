@@ -7,11 +7,14 @@ Building a time tracking system that uses physical NFC interactions to log activ
 ## Architecture Components
 
 1. **Time Tracker Device** - Physical NFC reader sending event data
-2. **Webhook Service** - Receives and validates device payloads
-3. **Supabase Database** - Stores all time tracking and user data
-4. **Web UI (Streamlit)** - Dashboard for data visualization and management
-5. **Processing Service** - Generates reflections based on time data
-6. **Email Service** - Delivers reflections to users
+
+2. **Supabase Database** - Stores all time tracking and user data
+
+3. **Web UI (Streamlit)** - Dashboard for data visualization and management
+
+4. **Processing Service** - Generates reflections based on time data
+
+5. **Email Service** - Delivers reflections to users
 
 ## Development Stages & Validation Criteria
 
@@ -22,23 +25,33 @@ Building a time tracking system that uses physical NFC interactions to log activ
 **Tasks**:
 
 - [x] Set up Streamlit container with Docker
+
 - [x] Configure Supabase connection
+
 - [x] Create basic UI layout
+
 - [x] Implement test data display
 
 **Validation Criteria**:
 
 - ✓ Streamlit app runs successfully in container
+
 - ✓ App connects to Supabase without errors
+
 - ✓ Test queries return expected results
+
 - ✓ Basic data visualization works
 
 **Notes**:
 
 - Row Level Security (RLS) access implemented using service role key
+
 - Data visualization and formatting for RFID events working
+
 - Added debugging panel for troubleshooting database connections
+
 - Completed: April 9, 2025
+
 - Cost Claude: 2.50€
 
 ### Stage 2: Data Management Interface
@@ -48,28 +61,43 @@ Building a time tracking system that uses physical NFC interactions to log activ
 **Tasks**:
 
 - [x] Create tag management interface
+
 - [x] Create device management interface
+
 - [x] Implement CRUD operations for tags
+
 - [x] Implement CRUD operations for devices
+
 - [x] Implement time tracking visualization
 
 **Validation Criteria**:
 
 - ✓ Can create, read, update, and delete tags
+
 - ✓ Can assign categories and names to tags
+
 - ✓ Can manage device information
+
 - ✓ Authentication protects private data
 
 **Notes**:
 
 - Database enhancements included adding user_id and reflection trigger fields
+
 - Time blocks view implemented with robust error handling for device reading issues
+
 - Complete tag and device management interfaces with CRUD operations
+
 - Time tracking visualization for both blocks and raw events
+
 - Integrated real-time metrics into dashboard
+
 - Improved UI navigation and workflow
+
 - Completed: April 10, 2025
+
 - Duration: 3h 25m (wall time), 18m 32s (API time)
+
 - Cost: $6.05
 
 ### Stage 3: Webhook Implementation & Authentication ✅
@@ -79,79 +107,133 @@ Building a time tracking system that uses physical NFC interactions to log activ
 **Tasks**:
 
 - [x] Create webhook service container
+
 - [x] Implement endpoint for device events
+
 - [x] Add validation and error handling
+
 - [x] Configure secure communication
+
 - [x] Implement user authentication with Supabase Auth
+
 - [x] Add login/logout functionality
+
 - [x] Configure Row Level Security for user data
+
 - [x] Create device API key management
+
 - [x] Implement device-specific API keys
+
 - [x] Add support for multiple authentication methods
-- [ ] Create validation endpoint for easier testing
+
+- [x] Create validation endpoint for easier testing
+
 - [x] Implement service role authentication for admin functions
+
 - [x] Document webhook integration for devices
 
 **Validation Criteria**:
 
 - ✓ Webhook accepts properly formatted payloads
+
 - ✓ Events are correctly stored in Supabase
+
 - ✓ Invalid requests are properly rejected
+
 - ✓ Can handle concurrent requests
+
 - ✓ Users can securely log in/out
+
 - ✓ User data is isolated through RLS
+
 - ✓ Webhook provides clear testing interface
+
 - ✓ API keys are securely managed
+
 - ✓ Device-specific API keys enforce security
+
 - ✓ Multiple authentication methods supported
+
 - ✓ Testing tools provide clear feedback
 
 **Notes**:
 
 - Implemented unified container approach with both services in one container
+
 - Added FastAPI for high-performance webhook processing
+
 - Created comprehensive authentication system for both users and devices
+
 - Implemented device API key management with device-specific keys
+
 - Added support for both Bearer token and X-API-Key authentication methods
+
 - Added detailed webhook testing interface with direct testing capabilities
+
 - Created new database table for device keys with proper foreign key relationships
+
 - Added validation endpoint to check API keys without sending events
+
 - Added RLS policies for all tables with service role bypass for admin functions
+
 - Created helper scripts for webhook testing and validation
+
 - Updated documentation including new WEBHOOK.md guide with troubleshooting section
+
 - Improved error handling and feedback for webhook requests
+
 - Completed: April 11, 2025
+
 - Duration: 3h 50m (wall time), 38m 4s (API time)
+
 - Cost: $14.29
 
 ### Stage 4: Time Visualization Dashboard
+
 **Objective**: Create visualizations of time tracking data.
 
 **Tasks**:
+
 - [ ] Implement daily time view
+
 - [ ] Add category summaries
+
 - [ ] Create weekly overview
+
 - [ ] Add filtering options
 
 **Validation Criteria**:
+
 - ✓ Visualizations accurately represent time data
+
 - ✓ Summaries calculate correctly
+
 - ✓ Filters work as expected
+
 - ✓ UI remains responsive with larger datasets
 
 ### Stage 5: Reflection Processing
+
 **Objective**: Implement Claude-powered reflections on time data.
 
 **Tasks**:
+
 - [ ] Set up Processing Service
+
 - [ ] Integrate Claude API
+
 - [ ] Create reflection triggers
+
 - [ ] Implement email delivery
 
 **Validation Criteria**:
+
 - ✓ Processing Service generates meaningful reflections
+
 - ✓ Reflections incorporate time data correctly
+
 - ✓ Triggers work reliably
+
 - ✓ Emails are delivered successfully
 
 ## Database Schema
@@ -250,23 +332,32 @@ WHERE
 ## Testing Strategy
 
 ### Unit Testing
+
 - Test Supabase connection and queries
+
 - Test webhook payload processing
+
 - Test data transformation functions
 
 ### Integration Testing
+
 - Test full data flow from webhook to database
+
 - Test reflection generation with real data
+
 - Test email delivery pipeline
 
 ### User Acceptance Testing
+
 - Verify UI is intuitive and responsive
+
 - Ensure visualizations are meaningful
+
 - Confirm reflection quality meets expectations
 
 ## Deployment Architecture
 
-```
+```plaintext
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
 │ Webhook Service │     │  Streamlit UI   │     │ Processing Svc  │
 │  (Docker/Flask) │     │  (Docker/Py)    │     │  (Docker/Py)    │
@@ -285,21 +376,31 @@ WHERE
 Following your preference for flow states, the implementation approach prioritizes:
 
 1. **Minimal Context Switching** - Complete one component before moving to next
+
 2. **Immediate Feedback** - Create test cases that provide quick validation
+
 3. **Clear Decision Points** - Each stage has explicit validation criteria
+
 4. **Simple Rules** - Following the "elegantly simple" principle from your framework
 
 ## Implementation Notes
 
 - Use Python 3.9+ for all services
+
 - Streamlit for rapid UI development
+
 - Supabase for authentication and database
+
 - Docker for containerization and deployment
+
 - Flask for lightweight webhook service
+
 - SendGrid for email delivery (optional)
 
 ## Next Steps
 
 1. Set up project repository structure
+
 2. Configure Docker for local development
+
 3. Begin Stage 1 implementation

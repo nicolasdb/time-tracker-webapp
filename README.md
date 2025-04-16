@@ -12,6 +12,7 @@ A web application for tracking time spent on projects and tasks with NFC readers
 ## Features
 
 ### Implemented
+
 1. **Supabase Integration**: Connection to Supabase database for data storage
 2. **Data Visualization**: Display and visualize time tracking data
 3. **Dashboard**: Interactive UI with live metrics and quick navigation
@@ -19,16 +20,17 @@ A web application for tracking time spent on projects and tasks with NFC readers
 5. **Device Management**: CRUD operations for NFC reader devices
 6. **Time Tracking**: View time blocks and raw RFID events by day
 7. **Reflection Triggers**: Designate tags that trigger reflections
-8. **Webhook Service**: Receive and process device events
-9. **User Authentication**: Secure login and user-specific data
-10. **Row Level Security**: Data isolation and protection by user
+8. **User Authentication**: Secure login and user-specific data
+9. **Row Level Security**: Data isolation and protection by user
 
 ### Planned
+
 1. **Advanced Reporting**: Detailed visual charts and reports of time allocation
 2. **Export**: Export data in various formats (CSV, PDF)
 3. **Reflection Processing**: AI-generated insights based on time tracking data
 
 ## Current Status
+
 ✅ Stage 1: Foundation - Basic Streamlit + Supabase integration
 ✅ Stage 2: Data Management Interface - Tag and device management, time tracking
 ✅ Stage 3: Webhook Implementation & Authentication - Webhook API, user auth, and RLS
@@ -36,16 +38,11 @@ A web application for tracking time spent on projects and tasks with NFC readers
 
 ## Services
 
-The application consists of two services running in the same container:
+The application consists of one service:
 
 1. **Streamlit UI** - Web interface for managing tags, devices, and viewing time data
    - Runs on port 8501
-   - Accessible at http://localhost:8501
-
-2. **Webhook API** - FastAPI service for receiving device events
-   - Runs on port 8000
-   - Webhook endpoint at http://localhost:8000/api/webhook/device-event
-   - Health check at http://localhost:8000/api/health
+   - Accessible at `http://localhost:8501`
 
 ## Contributing
 
@@ -62,7 +59,6 @@ Interested in contributing? Please see our [CONTRIBUTING.md](CONTRIBUTING.md) fo
    ```
 
 4. Access the UI at `http://localhost:8501`
-5. Access the webhook at `http://localhost:8000/api/webhook/device-event`
 
 ## Documentation
 

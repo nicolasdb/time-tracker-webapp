@@ -3,17 +3,20 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Build & Run Commands
+
 - Run the app locally: `streamlit run app/streamlit_app.py`
 - Run with Docker: `docker compose up --build`
 - Access application: `http://localhost:8501`
 - Install dependencies: `pip install -r app/requirements.txt`
 
 ## Testing
+
 - Run tests: `pytest app/tests/`
 - Run a single test: `pytest app/tests/test_file.py::test_function`
 - Run tests with coverage: `pytest --cov=app app/tests/`
 
 ## Code Style
+
 - Use Python type hints for all functions
 - Write docstrings for all modules, classes, and functions
 - Follow Single Responsibility Principle in function design
@@ -25,6 +28,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Use markdownlint for consistency in documentation
 
 ## Project Structure
+
 - `app/` - Application source code
   - `components/` - Streamlit UI components
     - `sidebar.py` - Navigation sidebar component
@@ -37,15 +41,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
     - `supabase.py` - Database connection handling
     - `data_loader.py` - Data loading and query functions
     - `visualization.py` - Data visualization helpers
+
 - `data/` - Data storage directory (mounted volume)
-- `sql/` - SQL scripts for database setup
-  - `rfid_events.sql` - Creates the events table
-  - `tag_assignments.sql` - Creates the tag assignments table
-  - `device_assignments.sql` - Creates the device assignments table
-  - `time_blocks_view.sql` - Creates the time blocks view
-  - `sql_scripts.md` - Documentation for SQL setup and maintenance
 
 ## Database Schema
+
 - `rfid_events` - Raw RFID tag events (insert/remove)
 - `tag_assignments` - RFID tag metadata and project assignments
   - Added fields: is_reflection_trigger, user_id
@@ -55,11 +55,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - Includes validation logic to filter out false readings
 
 ## UI Navigation
+
 - The app uses the `navigation` session state variable for page selection
 - Uses a single-click navigation model with session state
 - Quick action buttons on the dashboard link to relevant pages
 - Current app version: v0.2.0
 
 ## Debug Mode
+
 - Set `DEBUG_MODE=True` environment variable to enable debug information
 - Debug mode shows the configuration questions at the bottom of the page
