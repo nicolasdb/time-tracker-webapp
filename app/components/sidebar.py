@@ -43,19 +43,18 @@ def display_sidebar():
             if "navigation" not in st.session_state:
                 st.session_state.navigation = "Dashboard"
             
-            # Find the index of the current selection
-            try:
-                current_idx = nav_options.index(st.session_state.navigation)
-            except ValueError:
-                current_idx = 0
-            
             # Add navigation with key for callback handling
             selected = st.radio(
-                "Navigation",
+                "Choose an option:",
                 nav_options,
-                index=current_idx,
+                index=nav_options.index(st.session_state.navigation),
                 key="navigation"
             )
+            
+            # Update navigation state only if it has changed
+            if selected != st.session_state.navigation:
+                st.session_state.navigation = selected
+                st.experimental_rerun()
             
             st.divider()
             
@@ -63,8 +62,6 @@ def display_sidebar():
             if st.button("Sign Out"):
                 success, error = sign_out()
                 if success:
-                    # Don't try to modify navigation directly
-                    # Instead, set a flag that will be checked in streamlit_app.py
                     st.session_state["signed_out"] = True
                     st.rerun()
                 else:
@@ -73,7 +70,6 @@ def display_sidebar():
             # If not authenticated, just show login options in the sidebar
             st.warning("You must log in to access the application")
             if "navigation" not in st.session_state or st.session_state.navigation != "Login":
-                # Just set navigation directly - no rerun needed
                 st.session_state.navigation = "Login"
         
         # About section

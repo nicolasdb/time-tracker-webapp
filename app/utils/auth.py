@@ -18,7 +18,7 @@ from utils.supabase import get_supabase_client
 logger = logging.getLogger(__name__)
 
 # Path to store auth data
-AUTH_DATA_PATH = Path("/app/data/.auth_session")
+AUTH_DATA_PATH = Path("/tmp/.auth_session")
 
 def save_auth_session(auth_data):
     """
@@ -136,13 +136,6 @@ def initialize_auth():
         document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax";
     }
     
-    // Check for auth token in query params and save to cookie if present
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('_auth')) {
-        const token = urlParams.get('_auth');
-        setCookie('_auth_token', token, 7);
-    }
-    
     // DO NOT add cookie to URL params automatically - this was causing infinite loops
     </script>
     """, unsafe_allow_html=True)
@@ -182,7 +175,7 @@ def initialize_auth():
         
         # 2. Try to load saved session from file
         saved_session = load_auth_session()
-        if saved_session and saved_session.get("refresh_token"):
+        if (saved_session and saved_session.get("refresh_token")):
             logger.info("Found saved auth session, attempting to use it")
             # Set tokens from saved session
             st.session_state.auth["refresh_token"] = saved_session["refresh_token"]
@@ -317,7 +310,7 @@ def sign_in(email: str, password: str) -> Tuple[bool, Optional[str]]:
             
             # Add auth token to URL params immediately for cookie saving
             token = response.session.access_token[:30]
-            st.query_params["_auth"] = token
+            # st.query_params["_auth"] = token  # <-- This line is already commented out, keep it removed!
             
             # Add custom JavaScript to set cookie immediately
             st.markdown(f"""
@@ -458,21 +451,12 @@ def sign_out() -> Tuple[bool, Optional[str]]:
         except Exception as del_error:
             logger.warning(f"Failed to delete auth session file: {str(del_error)}")
         
-        # Clear URL parameters
-        if "_auth" in st.query_params:
-            st.query_params.pop("_auth")
-        
         # Add JavaScript to remove the cookie
         st.markdown("""
         <script>
             // Delete cookie by setting expiration in the past
             document.cookie = "_auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Lax";
             console.log('Auth cookie cleared');
-            
-            // Remove URL params
-            const url = new URL(window.location.href);
-            url.searchParams.delete('_auth');
-            window.history.replaceState({}, '', url);
         </script>
         """, unsafe_allow_html=True)
         
@@ -603,80 +587,52 @@ def get_current_user_email() -> Optional[str]:
         return user.email
     return None
 
-def get_auth_url_params():
-    """
-    Get URL parameters for maintaining auth state.
-    
-    Returns:
-        Dict with auth URL parameters
-    """
-    params = {}
-    
-    # Only add token if we have a valid session
-    if (st.session_state.auth["authenticated"] and 
-        st.session_state.auth["refresh_token"] and 
-        st.session_state.auth["access_token"]):
-        
-        # Create a short token that contains only part of the access token
-        # This is not for security but for maintaining state between page loads
-        token = st.session_state.auth["access_token"][:30]
-        params["_auth"] = token
-        
-    return params
-
 def ensure_authenticated():
     """
     Ensure the user is authenticated. If not, redirect to login.
-    
+
     Returns:
         Boolean indicating if user is authenticated
     """
-    # Try two methods to recover authentication
-    
-    # 1. First check if we're already authenticated in session state
-    if st.session_state.auth["authenticated"]:
-        # Make sure auth token is in URL for cookie saving
-        if "_auth" not in st.query_params:
-            # Add auth token to URL
-            url_params = get_auth_url_params()
-            for key, value in url_params.items():
-                st.query_params[key] = value
-        
-        logger.debug("User is already authenticated in session state")
+    # 1. Check if we're already authenticated in session state
+    if st.session_state.get("auth", {}).get("authenticated", False):
         return True
-    
-    # 2. If not authenticated, check URL param _auth 
-    if "_auth" in st.query_params:
-        auth_token = st.query_params["_auth"]
-        logger.info(f"Found auth token in URL: {auth_token[:10]}...")
-        
-        # Try to load previous session using file-based storage
-        saved_session = load_auth_session()
-        if saved_session and saved_session.get("refresh_token"):
-            # Set tokens from saved session
-            st.session_state.auth["refresh_token"] = saved_session["refresh_token"]
-            if saved_session.get("access_token"):
-                st.session_state.auth["access_token"] = saved_session["access_token"]
-                
-            # Try to refresh the session
-            success = try_refresh_session()
-            if success:
-                logger.info("Session restored using URL token and saved session")
-                return True
-    
-    # 3. Last chance recovery: try getting session from Supabase
+
+    # 2. Try to refresh session
+    if st.session_state.get("auth", {}).get("refresh_token"):
+        logger.info("Attempting to refresh session with stored refresh token")
+        success = try_refresh_session()
+        if success:
+            logger.info("Session refreshed successfully from session state token")
+            save_auth_session(st.session_state.auth)
+            return True
+
+    # 3. Try to load saved session from file
+    saved_session = load_auth_session()
+    if saved_session and saved_session.get("refresh_token"):
+        logger.info("Found saved auth session, attempting to use it")
+        # Set tokens from saved session
+        st.session_state.auth = saved_session
+
+        # Try to refresh with these tokens
+        success = try_refresh_session()
+        if success:
+            logger.info("Session refreshed successfully from saved file")
+            return True
+
+    # 4. Last chance recovery: try getting session from Supabase
     logger.warning("User not authenticated, attempting final recovery")
-    
+
     # Try to get session one more time before redirecting
     client = get_supabase_client()
     if client:
         try:
             logger.info("Getting current Supabase session")
             session = client.auth.get_session()
-            
+
             if session:
                 user = client.auth.get_user()
-                
+
                 if user and user.user:
                     # Update auth state
                     st.session_state.auth = {
@@ -686,29 +642,18 @@ def ensure_authenticated():
                         "refresh_token": session.refresh_token,
                         "session": session
                     }
-                    
+
                     # Save the session for future recovery
                     save_auth_session(st.session_state.auth)
-                    
-                    # Add auth param to URL
-                    url_params = get_auth_url_params()
-                    for key, value in url_params.items():
-                        st.query_params[key] = value
-                    
+
                     logger.info(f"Last-minute authentication recovery for user: {user.user.email}")
                     return True
         except Exception as e:
             logger.error(f"Final authentication check failed: {str(e)}")
-    
+
     # If we get here, authentication failed - redirect to login
-    # Clear auth params from URL
-    if "_auth" in st.query_params:
-        st.query_params.pop("_auth")
-        
-    # Just directly set navigation to Login, no flags or reruns
-    # This is simpler and less prone to loops
-    if "navigation" in st.session_state:
-        st.session_state.navigation = "Login"
+    logger.info("Authentication check failed, redirecting to login")
+    st.session_state.navigation = "Login"
     return False
 
 def is_valid_email(email: str) -> bool:
@@ -794,15 +739,12 @@ def format_auth_error(error_message: str) -> str:
 def display_login_form():
     """
     Display the login form with multiple auth options.
-    
-    Returns:
-        Boolean indicating if user is now authenticated
     """
     st.title("🔐 Time Tracker Login")
-    
+
     # Tab selection for different authentication methods
-    tab1, tab2, tab3, tab4 = st.tabs(["Sign In", "Sign Up", "Magic Link", "Reset Password"])
-    
+    tab1, tab2, tab3 = st.tabs(["Sign In", "Sign Up", "Reset Password"])
+
     with tab1:
         st.subheader("Sign in with Email and Password")
         
@@ -823,7 +765,7 @@ def display_login_form():
                         st.success("Signed in successfully!")
                         st.session_state.navigation = "Dashboard"
                         st.rerun()
-                        return True
+                        return
                     else:
                         st.error(error)
                         return False
@@ -860,35 +802,6 @@ def display_login_form():
         st.info("After signing up, you'll receive a confirmation email. Click the link in the email to verify your account before signing in.")
     
     with tab3:
-        st.subheader("Sign in with Magic Link")
-        
-        if st.session_state.magic_link_sent:
-            st.success("Magic link sent! Please check your email.")
-            if st.button("I didn't receive the email", key="resend_magic_link"):
-                st.session_state.magic_link_sent = False
-                st.rerun()
-        else:
-            with st.form("magic_link_form"):
-                email = st.text_input("Email", key="magic_link_email")
-                submit = st.form_submit_button("Send Magic Link")
-                
-                if submit:
-                    if not email:
-                        st.error("Please enter your email")
-                        return False
-                        
-                    with st.spinner("Sending magic link..."):
-                        success, error = send_magic_link(email)
-                        
-                        if success:
-                            st.session_state.magic_link_sent = True
-                            st.rerun()
-                            return False
-                        else:
-                            st.error(error)
-                            return False
-    
-    with tab4:
         st.subheader("Reset Your Password")
         
         if st.session_state.reset_password_sent:

@@ -94,7 +94,7 @@ def main():
         
         # Display sidebar and get selected page
         display_sidebar()
-        selected_page = st.session_state.navigation
+        selected_page = st.session_state.get("navigation", "Dashboard") # Changed to get the value from session state
         
         # Log current navigation
         logger.debug(f"Current navigation: {selected_page}")
@@ -144,35 +144,11 @@ def main():
                 st.metric("Week Total", format_duration(metrics['week_time']))
                 st.metric("Tasks Completed", str(metrics['completed_tasks']))
             
-            # Display navigation cards
-            st.write("### Quick Actions")
-            
-            col1, col2, col3, col4 = st.columns(4)
-            
-            with col1:
-                st.info("##### Manage Tags")
-                st.markdown("Add or edit tags to categorize your activities")
-                if st.button("Open Tag Management", key="goto_tags"):
-                    # Set session state and rerun to navigate
-                    st.session_state.navigation = "Tag Management"
-                    st.rerun()
-            
-            with col2:
-                st.info("##### Manage Devices")
-                st.markdown("Configure your NFC readers and locations")
-                if st.button("Open Device Management", key="goto_devices"):
-                    # Set session state and rerun to navigate
-                    st.session_state.navigation = "Device Management"
-                    st.rerun()
-            
-            with col3:
-                st.info("##### View Reports")
-                st.markdown("Analyze your time data with visual reports")
-                if st.button("Open Reports", key="goto_reports"):
-                    # Set session state and rerun to navigate
-                    st.session_state.navigation = "Reports"
-                    st.rerun()                    
-           
+            # Removed the Quick Actions section
+            # Removed the columns for quick actions
+            # Removed buttons for Tag Management, Device Management, and Reports
+                    
+       
         elif selected_page == "Track Time":
             st.title("🕒 Track Time")
             st.markdown("""
