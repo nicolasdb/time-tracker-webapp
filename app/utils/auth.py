@@ -8,6 +8,7 @@ import streamlit as st
 import re
 import pickle
 import base64
+import streamlit.components.v1 as components
 from datetime import datetime, timedelta
 from typing import Dict, Optional, Any, Tuple
 from pathlib import Path
@@ -764,7 +765,19 @@ def display_login_form():
                     if success:
                         st.success("Signed in successfully!")
                         st.session_state.navigation = "Dashboard"
-                        st.rerun()
+                        # st.rerun()
+                        # Inject JavaScript to reload the page
+                        st.components.v1.html(
+                            """
+                            <script>
+                                console.log("Reloading page...");
+                                setTimeout(function() {
+                                    window.parent.location.reload(); // Reload the parent window
+                                }, 10);
+                            </script>
+                            """,
+                            height=0,
+                        )
                         return
                     else:
                         st.error(error)

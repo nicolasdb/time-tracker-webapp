@@ -4,7 +4,7 @@ Main Streamlit application for the time tracker webapp.
 import os
 import logging
 import streamlit as st
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
 # Import components
 from components.sidebar import display_sidebar
@@ -23,8 +23,8 @@ logger = logging.getLogger(__name__)
 
 def init_environment():
     """Initialize environment variables and connections."""
-    # Load environment variables
-    load_dotenv()
+    # # Load environment variables
+    # load_dotenv()
     
     # Check Supabase configuration
     supabase_url = os.getenv("SUPABASE_URL")
