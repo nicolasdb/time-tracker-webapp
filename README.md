@@ -1,76 +1,77 @@
-# Time Tracker Webapp
+# Time Tracker Journey
 
-A web application for tracking time spent on projects and tasks with NFC readers.
-
-## Purpose
-
-- Track time spent on different projects and tasks
-- Visualize time allocation and productivity
-- Generate reports on time usage
-- Help improve personal and team productivity
+A FastAPI-based web application for tracking time using NFC/RFID tags, providing insights, and managing your productivity journey.
 
 ## Features
 
-### Implemented
+- **NFC/RFID Tag Tracking**: Track time using physical NFC tags
+- **Tag Management**: Create, edit, and delete tags for different projects
+- **RFID Event Management**: View and manage RFID events
+- **Dashboard**: Visualize your time usage and productivity
+- **Reflections**: Daily and weekly reflections on your work and productivity
+- **Integration**: Connects with Journey Service for cognitive wealth insights
 
-1. **Supabase Integration**: Connection to Supabase database for data storage
-2. **Data Visualization**: Display and visualize time tracking data
-3. **Dashboard**: Interactive UI with live metrics and quick navigation
-4. **Tag Management**: CRUD operations for RFID tags with project/task assignments
-5. **Device Management**: CRUD operations for NFC reader devices
-6. **Time Tracking**: View time blocks and raw RFID events by day
-7. **Reflection Triggers**: Designate tags that trigger reflections
-8. **User Authentication**: Secure login and user-specific data
-9. **Row Level Security**: Data isolation and protection by user
+## Tech Stack
 
-### Planned
+- **Backend**: FastAPI with Jinja2 templates
+- **Frontend**: HTMX, Alpine.js, Tailwind CSS with Windster dashboard template
+- **Database**: Supabase
+- **Integration**: Journey Service API
 
-1. **Advanced Reporting**: Detailed visual charts and reports of time allocation
-2. **Export**: Export data in various formats (CSV, PDF)
-3. **Reflection Processing**: AI-generated insights based on time tracking data
+## Development Setup
 
-## Current Status
+### Prerequisites
 
-✅ Stage 1: Foundation - Basic Streamlit + Supabase integration
-✅ Stage 2: Data Management Interface - Tag and device management, time tracking
-✅ Stage 3: Webhook Implementation & Authentication - Webhook API, user auth, and RLS
-🔄 Stage 4: Time Visualization Dashboard - In planning
+- Docker and docker-compose
+- Supabase account (for database)
 
-## Services
+### Installation
 
-The application consists of one service:
+1. Clone the repository:
+   ```
+   git clone https://github.com/yourusername/time-tracker-webapp.git
+   cd time-tracker-webapp
+   ```
 
-1. **Streamlit UI** - Web interface for managing tags, devices, and viewing time data
-   - Runs on port 8501
-   - Accessible at `http://localhost:8501`
+2. Create a `.env` file from the example:
+   ```
+   cp app/.env.example app/.env
+   ```
+   
+3. Update the `.env` file with your Supabase credentials
+
+4. Start the development server:
+   ```
+   docker-compose up
+   ```
+
+5. Access the application at http://localhost:8000
+
+## Project Structure
+
+```
+app/
+├── static/              # Static assets
+│   ├── css/             # Compiled CSS
+│   ├── js/              # JavaScript files
+│   ├── images/          # Images
+│   └── src/             # Source files for Tailwind
+├── templates/           # Jinja2 templates
+│   ├── auth/            # Authentication pages
+│   ├── dashboard/       # Dashboard pages
+│   ├── tags/            # Tag management pages
+│   └── rfid_events/     # RFID event pages
+├── routers/             # FastAPI routers
+├── models/              # Pydantic models
+├── services/            # Business logic
+├── main.py              # Main application entry
+└── requirements.txt     # Python dependencies
+```
 
 ## Contributing
 
-Interested in contributing? Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-### Quick Start
-
-1. Clone the repository
-2. Set up environment variables (see [SETUP.md](SETUP.md))
-3. Run the application:
-
-   ```bash
-   docker compose up --build
-   ```
-
-4. Access the UI at `http://localhost:8501`
-
-## Documentation
-
-- [SETUP.md](SETUP.md) - Detailed deployment and configuration guide
-- [CONTRIBUTING.md](CONTRIBUTING.md) - Development and contribution guidelines
-- [TECHNICAL.md](TECHNICAL.md) - Technical architecture and implementation details
-- [WEBHOOK.md](WEBHOOK.md) - Webhook API documentation and device integration guide
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-> Copyright 2025 Nicolas de Barquin
->
-> This project is licensed under the Apache License 2.0. See the LICENSE file for details.
-
-Please note that this project uses Docker, Streamlit, and FastAPI, which are licensed under their respective licenses.
+This project is licensed under the MIT License - see the LICENSE file for details.

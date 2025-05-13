@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Settings - Time Tracker Journey{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8 mb-6">
+        <h1 class="text-xl font-semibold text-gray-900 mb-6">Settings</h1>
+        
+        <form action="/settings" method="POST">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- User Settings -->
+                <div class="space-y-6">
+                    <h2 class="text-lg font-medium text-gray-900">User Settings</h2>
+                    
+                    <div>
+                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Name</label>
+                        <input type="text" name="name" id="name" value="John Doe" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5">
+                    </div>
+                    
+                    <div>
+                        <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Email</label>
+                        <input type="email" name="email" id="email" value="john@example.com" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5">
+                    </div>
+                    
+                    <div>
+                        <label for="password" class="block mb-2 text-sm font-medium text-gray-900">New Password</label>
+                        <input type="password" name="password" id="password" placeholder="Leave blank to keep current password" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5">
+                    </div>
+                </div>
+                
+                <!-- Application Settings -->
+                <div class="space-y-6">
+                    <h2 class="text-lg font-medium text-gray-900">Application Settings</h2>
+                    
+                    <div>
+                        <label for="timezone" class="block mb-2 text-sm font-medium text-gray-900">Timezone</label>
+                        <select name="timezone" id="timezone" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5">
+                            <option value="UTC">UTC</option>
+                            <option value="Europe/London">Europe/London</option>
+                            <option value="Europe/Berlin" selected>Europe/Berlin</option>
+                            <option value="America/New_York">America/New_York</option>
+                            <option value="America/Los_Angeles">America/Los_Angeles</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="default_view" class="block mb-2 text-sm font-medium text-gray-900">Default Dashboard View</label>
+                        <select name="default_view" id="default_view" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5">
+                            <option value="daily" selected>Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <input type="checkbox" name="enable_notifications" id="enable_notifications" class="w-4 h-4 text-cyan-600 bg-gray-100 rounded border-gray-300 focus:ring-cyan-600" checked>
+                        <label for="enable_notifications" class="ml-2 text-sm font-medium text-gray-900">Enable Notifications</label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- API Integration Settings -->
+            <div class="mt-8">
+                <h2 class="text-lg font-medium text-gray-900 mb-4">API Integration</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div>
+                        <label for="supabase_url" class="block mb-2 text-sm font-medium text-gray-900">Supabase URL</label>
+                        <input type="text" name="supabase_url" id="supabase_url" value="https://example.supabase.co" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5">
+                    </div>
+                    
+                    <div>
+                        <label for="supabase_key" class="block mb-2 text-sm font-medium text-gray-900">Supabase Key</label>
+                        <input type="password" name="supabase_key" id="supabase_key" value="your-key-here" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Journey Service Settings -->
+            <div class="mt-8">
+                <h2 class="text-lg font-medium text-gray-900 mb-4">Journey Service</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div>
+                        <label for="journey_url" class="block mb-2 text-sm font-medium text-gray-900">Journey Service URL</label>
+                        <input type="text" name="journey_url" id="journey_url" value="http://journey-service:3000" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5">
+                    </div>
+                    
+                    <div>
+                        <label for="journey_key" class="block mb-2 text-sm font-medium text-gray-900">API Key</label>
+                        <input type="password" name="journey_key" id="journey_key" value="your-journey-key" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Submit Button -->
+            <div class="mt-6">
+                <button type="submit" class="px-5 py-2.5 text-sm font-medium text-white bg-cyan-600 rounded-lg hover:bg-cyan-700 focus:ring-4 focus:ring-cyan-200">
+                    Save Settings
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

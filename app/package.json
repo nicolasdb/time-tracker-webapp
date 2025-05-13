@@ -1,0 +1,19 @@
+{
+  "name": "time-tracker-journey",
+  "version": "1.0.0",
+  "description": "Time Tracker Journey UI with FastAPI and Windster",
+  "scripts": {
+    "build:css": "tailwindcss -i ./static/src/main.css -o ./static/css/main.css",
+    "watch:css": "tailwindcss -i ./static/src/main.css -o ./static/css/main.css --watch"
+  },
+  "dependencies": {
+    "alpinejs": "^3.13.0",
+    "flowbite": "^1.6.2",
+    "apexcharts": "^3.29.0"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.0.18",
+    "postcss": "^8.3.9",
+    "autoprefixer": "^10.3.7"
+  }
+}

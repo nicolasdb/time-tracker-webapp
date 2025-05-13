@@ -1,0 +1,282 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Time Tracker Journey{% endblock %}
+
+{% block content %}
+<!-- Begin page content -->
+<div class="container mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <!-- Time Today Card -->
+        <div class="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <span class="text-2xl sm:text-3xl leading-none font-bold text-gray-900">{{ data.total_hours_today }}</span>
+                    <h3 class="text-base font-normal text-gray-500">Hours tracked today</h3>
+                </div>
+                <div class="ml-5 w-0 flex items-center justify-end flex-1 text-green-500 text-base font-bold">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        <!-- Time This Week Card -->
+        <div class="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <span class="text-2xl sm:text-3xl leading-none font-bold text-gray-900">{{ data.total_hours_week }}</span>
+                    <h3 class="text-base font-normal text-gray-500">Hours tracked this week</h3>
+                </div>
+                <div class="ml-5 w-0 flex items-center justify-end flex-1 text-green-500 text-base font-bold">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        <!-- Projects Card -->
+        <div class="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <span class="text-2xl sm:text-3xl leading-none font-bold text-gray-900">{{ data.projects|length }}</span>
+                    <h3 class="text-base font-normal text-gray-500">Active projects</h3>
+                </div>
+                <div class="ml-5 w-0 flex items-center justify-end flex-1 text-cyan-600 text-base font-bold">
+                    <a href="{{ url_for('tags.list_tags') }}" class="text-cyan-600 hover:text-cyan-700">View all</a>
+                </div>
+            </div>
+        </div>
+        <!-- Tags Card -->
+        <div class="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <span class="text-2xl sm:text-3xl leading-none font-bold text-gray-900">{{ data.tags_count|default(0) }}</span>
+                    <h3 class="text-base font-normal text-gray-500">Registered tags</h3>
+                </div>
+                <div class="ml-5 w-0 flex items-center justify-end flex-1 text-cyan-600 text-base font-bold">
+                    <a href="{{ url_for('tags.list_tags') }}" class="text-cyan-600 hover:text-cyan-700">Manage tags</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- Project Breakdown -->
+        <div class="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8">
+            <div class="mb-4 flex items-center justify-between">
+                <div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Project Breakdown</h3>
+                    <span class="text-base font-normal text-gray-500">This week's time allocation</span>
+                </div>
+            </div>
+            <div class="flex flex-col mt-8">
+                <div class="overflow-x-auto rounded-lg">
+                    <div class="align-middle inline-block min-w-full">
+                        <div class="shadow overflow-hidden sm:rounded-lg">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="p-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Project
+                                        </th>
+                                        <th scope="col" class="p-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Hours
+                                        </th>
+                                        <th scope="col" class="p-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Percentage
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white">
+                                    {% for project in data.projects %}
+                                    <tr>
+                                        <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-900">
+                                            {{ project.name }}
+                                        </td>
+                                        <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-500">
+                                            {{ project.hours }}
+                                        </td>
+                                        <td class="p-4 whitespace-nowrap text-sm font-semibold text-gray-900">
+                                            <div class="flex items-center">
+                                                <span class="mr-2 text-xs font-medium">{{ project.percentage }}%</span>
+                                                <div class="relative w-full">
+                                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                                        <div class="bg-cyan-600 h-2 rounded-full" style="width: {{ project.percentage }}%"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activities -->
+        <div class="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8">
+            <div class="mb-4 flex items-center justify-between">
+                <div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Recent Activities</h3>
+                    <span class="text-base font-normal text-gray-500">Latest time entries</span>
+                </div>
+                <div class="flex-shrink-0">
+                    <a href="#" class="text-sm font-medium text-cyan-600 hover:bg-gray-100 rounded-lg p-2">View all</a>
+                </div>
+            </div>
+            <div class="flex flex-col mt-8">
+                <div class="overflow-x-auto rounded-lg">
+                    <div class="align-middle inline-block min-w-full">
+                        <div class="shadow overflow-hidden sm:rounded-lg">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="p-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Project
+                                        </th>
+                                        <th scope="col" class="p-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Duration
+                                        </th>
+                                        <th scope="col" class="p-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Time
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white">
+                                    {% for activity in data.recent_activities %}
+                                    <tr>
+                                        <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-900">
+                                            {{ activity.project }}
+                                        </td>
+                                        <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-500">
+                                            {{ activity.duration }}
+                                        </td>
+                                        <td class="p-4 whitespace-nowrap text-sm font-normal text-gray-500">
+                                            {{ activity.timestamp }}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Time Distribution Chart -->
+    <div class="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8 mb-6">
+        <h3 class="text-xl font-bold text-gray-900 mb-2">Weekly Time Distribution</h3>
+        <div class="chart-container" style="height: 300px;">
+            <div id="timeDistributionChart"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // ApexCharts code for Weekly Time Distribution
+    document.addEventListener("DOMContentLoaded", function() {
+        var options = {
+            series: [{
+                name: 'Time (hours)',
+                data: [4.2, 5.1, 6.5, 7.8, 3.2, 2.5, 3.2]
+            }],
+            chart: {
+                height: 300,
+                type: 'bar',
+                toolbar: {
+                    show: false
+                }
+            },
+            colors: ['#0E9F6E', '#3F83F8', '#0694A2', '#9061F9', '#FF5A1F', '#E74694', '#1A56DB'],
+            plotOptions: {
+                bar: {
+                    columnWidth: '60%',
+                    borderRadius: 3,
+                    distributed: true
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            legend: {
+                show: false
+            },
+            xaxis: {
+                categories: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+                axisBorder: {
+                    show: false
+                },
+                axisTicks: {
+                    show: false
+                },
+                labels: {
+                    style: {
+                        colors: '#64748B',
+                        fontSize: '12px'
+                    }
+                }
+            },
+            yaxis: {
+                title: {
+                    text: 'Hours',
+                    style: {
+                        color: '#64748B'
+                    }
+                },
+                labels: {
+                    style: {
+                        colors: '#64748B',
+                        fontSize: '12px'
+                    }
+                }
+            },
+            grid: {
+                show: true,
+                borderColor: '#E5E7EB',
+                strokeDashArray: 4,
+                position: 'back'
+            },
+            fill: {
+                opacity: 1
+            }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#timeDistributionChart"), options);
+        chart.render();
+    });
+
+    // Sidebar toggle for mobile
+    document.addEventListener("DOMContentLoaded", function() {
+        const sidebarToggle = document.getElementById('toggleSidebarMobile');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+        const sidebarClose = document.getElementById('toggleSidebarMobileClose');
+        const sidebarOpen = document.getElementById('toggleSidebarMobileHamburger');
+        
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('hidden');
+                sidebarBackdrop.classList.toggle('hidden');
+                sidebarOpen.classList.toggle('hidden');
+                sidebarClose.classList.toggle('hidden');
+            });
+        }
+        
+        if (sidebarBackdrop) {
+            sidebarBackdrop.addEventListener('click', function() {
+                sidebar.classList.add('hidden');
+                sidebarBackdrop.classList.add('hidden');
+                sidebarOpen.classList.remove('hidden');
+                sidebarClose.classList.add('hidden');
+            });
+        }
+    });
+</script>
+{% endblock %}

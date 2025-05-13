@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Tag Management - Time Tracker Journey{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-semibold text-gray-900">Tag Management</h1>
+        <a href="{{ url_for('tags.create_tag_form') }}" class="px-5 py-2.5 text-sm font-medium text-white bg-cyan-600 rounded-lg hover:bg-cyan-700 focus:ring-4 focus:ring-cyan-200">
+            Add New Tag
+        </a>
+    </div>
+    
+    <!-- Tag List -->
+    <div class="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8 mb-6">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left text-gray-500">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">Tag Name</th>
+                        <th scope="col" class="px-6 py-3">UID</th>
+                        <th scope="col" class="px-6 py-3">Project</th>
+                        <th scope="col" class="px-6 py-3">Color</th>
+                        <th scope="col" class="px-6 py-3">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tag in tags %}
+                    <tr class="bg-white border-b hover:bg-gray-50">
+                        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                            {{ tag.name }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ tag.uid }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ tag.project }}
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="w-6 h-6 rounded-full {{ tag.color }}"></div>
+                        </td>
+                        <td class="px-6 py-4 flex space-x-2">
+                            <a href="{{ url_for('tags.edit_tag_form', tag_id=tag.id) }}" class="font-medium text-cyan-600 hover:underline">Edit</a>
+                            <form action="{{ url_for('tags.delete_tag', tag_id=tag.id) }}" method="POST" class="inline">
+                                <button type="submit" class="font-medium text-red-600 hover:underline" onclick="return confirm('Are you sure you want to delete this tag?')">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- NFC Scanner Section -->
+    <div class="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8">
+        <h2 class="text-lg font-medium text-gray-900 mb-4">NFC Tag Scanner</h2>
+        <p class="text-sm text-gray-600 mb-4">Place an unregistered NFC tag near the scanner to detect and register it.</p>
+        
+        <div class="bg-gray-50 p-6 rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center">
+            <div class="mb-4">
+                <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
+                </svg>
+            </div>
+            <div id="tag-status" class="text-center">
+                <p class="text-gray-500 mb-2">Waiting for tag...</p>
+                <div class="animate-pulse text-sm text-gray-400">Place tag near reader</div>
+            </div>
+        </div>
+        
+        <!-- Detected Tag Info (Hidden initially, shown when tag detected) -->
+        <div id="detected-tag" class="mt-6 hidden">
+            <h3 class="text-md font-medium text-gray-900 mb-2">Detected Tag</h3>
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-sm font-medium text-gray-700">UID</p>
+                        <p id="detected-uid" class="text-sm text-gray-600">N/A</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-700">Type</p>
+                        <p id="detected-type" class="text-sm text-gray-600">N/A</p>
+                    </div>
+                </div>
+                <div class="mt-4 flex justify-end">
+                    <button id="register-tag" class="px-4 py-2 text-sm font-medium text-white bg-cyan-600 rounded-lg hover:bg-cyan-700 focus:ring-4 focus:ring-cyan-200">
+                        Register Tag
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Simulating NFC tag detection (in a real app, this would connect to your NFC reader)
+    document.addEventListener('DOMContentLoaded', function() {
+        // For demo purposes, show the detected tag section after 5 seconds
+        setTimeout(function() {
+            document.getElementById('tag-status').innerHTML = '<p class="text-green-500 font-medium mb-2">Tag Detected!</p>';
+            
+            document.getElementById('detected-uid').textContent = '04:A2:B3:C4:D5:E6';
+            document.getElementById('detected-type').textContent = 'MIFARE Classic 1K';
+            
+            document.getElementById('detected-tag').classList.remove('hidden');
+        }, 5000);
+        
+        // Register tag button event
+        document.getElementById('register-tag').addEventListener('click', function() {
+            window.location.href = "{{ url_for('tags.create_tag_form') }}?uid=04:A2:B3:C4:D5:E6";
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

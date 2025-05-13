@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block title %}Reflections - Time Tracker Journey{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-semibold text-gray-900">Daily Reflections</h1>
+        <a href="#" class="px-5 py-2.5 text-sm font-medium text-white bg-cyan-600 rounded-lg hover:bg-cyan-700 focus:ring-4 focus:ring-cyan-200">
+            New Reflection
+        </a>
+    </div>
+    
+    <!-- Monthly calendar grid -->
+    <div class="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8 mb-6">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-medium text-gray-900">May 2025</h2>
+            <div class="flex space-x-2">
+                <button class="p-2 hover:bg-gray-100 rounded-lg">
+                    <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                    </svg>
+                </button>
+                <button class="p-2 hover:bg-gray-100 rounded-lg">
+                    <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Days of week header -->
+        <div class="grid grid-cols-7 gap-1 mb-2">
+            {% for day in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] %}
+                <div class="text-xs font-medium text-center text-gray-500 py-2">{{ day }}</div>
+            {% endfor %}
+        </div>
+        
+        <!-- Calendar days -->
+        <div class="grid grid-cols-7 gap-1">
+            <!-- Previous month days (grayed out) -->
+            {% for day in range(29, 31) %}
+                <div class="aspect-square p-1">
+                    <div class="rounded-lg text-gray-400 flex flex-col items-center justify-center h-full">
+                        <span class="text-sm">{{ day }}</span>
+                    </div>
+                </div>
+            {% endfor %}
+            
+            <!-- Current month days -->
+            {% for day in range(1, 32) %}
+                <div class="aspect-square p-1">
+                    <div class="rounded-lg hover:bg-gray-100 flex flex-col items-center justify-center h-full {% if day == 13 %}bg-cyan-600 text-white{% endif %}">
+                        <span class="text-sm">{{ day }}</span>
+                        
+                        <!-- Reflection indicator dot -->
+                        {% if day in [3, 7, 10, 13, 15, 20, 25] %}
+                            <span class="w-1.5 h-1.5 rounded-full bg-{% if day == 13 %}white{% else %}green-500{% endif %} mt-1"></span>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+            
+            <!-- Next month days (grayed out) -->
+            {% for day in range(1, 5) %}
+                <div class="aspect-square p-1">
+                    <div class="rounded-lg text-gray-400 flex flex-col items-center justify-center h-full">
+                        <span class="text-sm">{{ day }}</span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Recent Reflections -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Today's Reflection -->
+        <div class="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-medium text-gray-900">Today's Reflection</h2>
+                <div class="text-sm font-medium text-cyan-600 hover:underline">May 13, 2025</div>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <h3 class="text-sm font-medium text-gray-700">Achievements & Progress</h3>
+                    <p class="text-sm text-gray-600">Completed the initial design for the dashboard UI. Made significant progress on the tag management feature. Had a productive meeting with the team about future directions.</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-sm font-medium text-gray-700">Learnings & Insights</h3>
+                    <p class="text-sm text-gray-600">Discovered that HTMX with FastAPI provides a much smoother development experience than expected. The combination of server-side rendering with minimal JavaScript is powerful.</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-sm font-medium text-gray-700">Energy & Flow Notes</h3>
+                    <p class="text-sm text-gray-600">High energy in the morning that was channeled effectively into design work. Afternoon energy dip around 2pm was managed with a short break. Overall good flow state achieved during coding sessions.</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-sm font-medium text-gray-700">Tomorrow's Focus</h3>
+                    <p class="text-sm text-gray-600">Implement the RFID events page and complete the tag management CRUD functionality. Review the overall navigation structure and make adjustments if needed.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Previous Reflection -->
+        <div class="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-medium text-gray-900">Previous Reflection</h2>
+                <div class="text-sm font-medium text-cyan-600 hover:underline">May 10, 2025</div>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <h3 class="text-sm font-medium text-gray-700">Achievements & Progress</h3>
+                    <p class="text-sm text-gray-600">Set up the initial project structure. Created the repository and configured Docker. Researched UI frameworks and settled on Windster dashboard with Tailwind CSS.</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-sm font-medium text-gray-700">Learnings & Insights</h3>
+                    <p class="text-sm text-gray-600">The Windster dashboard template provides a good starting point but requires adaptation for our specific needs. The balance between reusing components and customizing is important.</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-sm font-medium text-gray-700">Energy & Flow Notes</h3>
+                    <p class="text-sm text-gray-600">Started the day with planning which helped set clear direction. Energy levels were steady throughout the day. Made decisions efficiently without getting stuck in analysis paralysis.</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-sm font-medium text-gray-700">Next Steps</h3>
+                    <p class="text-sm text-gray-600">Begin implementing the core UI components. Focus on the authentication system and dashboard layout first. Schedule time for reviewing the design with the team.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Weekly Insights -->
+    <div class="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8 mt-6">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-medium text-gray-900">Weekly Insights</h2>
+            <div class="text-sm font-medium text-cyan-600 hover:underline">May 6 - May 12, 2025</div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h3 class="text-sm font-medium text-gray-700 mb-2">Productivity Score</h3>
+                <div class="text-3xl font-bold text-cyan-600">87%</div>
+                <p class="text-xs text-gray-500 mt-1">+5% from last week</p>
+            </div>
+            
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h3 class="text-sm font-medium text-gray-700 mb-2">Focus Sessions</h3>
+                <div class="text-3xl font-bold text-cyan-600">14</div>
+                <p class="text-xs text-gray-500 mt-1">-2 from last week</p>
+            </div>
+            
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h3 class="text-sm font-medium text-gray-700 mb-2">Top Project</h3>
+                <div class="text-3xl font-bold text-cyan-600">UI Design</div>
+                <p class="text-xs text-gray-500 mt-1">12.5 hours</p>
+            </div>
+            
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h3 class="text-sm font-medium text-gray-700 mb-2">Energy Rating</h3>
+                <div class="text-3xl font-bold text-cyan-600">8.2/10</div>
+                <p class="text-xs text-gray-500 mt-1">+0.5 from last week</p>
+            </div>
+        </div>
+        
+        <div class="mt-6">
+            <h3 class="text-sm font-medium text-gray-700 mb-2">Key Patterns</h3>
+            <p class="text-sm text-gray-600">Morning hours (8-11 AM) consistently show the highest productivity. Tuesday and Thursday were peak flow days. Context switching decreased by 15% compared to last week, correlating with higher satisfaction scores.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

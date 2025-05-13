@@ -1,25 +1,23 @@
-# Docker Compose configuration for Time Tracker
+version: '3'
 
 services:
-  time-tracker:
+  webapp:
     build:
       context: ./app
       dockerfile: Dockerfile
-    container_name: time-tracker
+    container_name: time-tracker-webapp
     ports:
-      - "8501:8501"  # Streamlit UI
+      - "8000:8000"  # FastAPI
     networks:
       - web
     volumes:
       - ./app:/app
-      # - ./data:/app/data
     env_file:
       - ./app/.env
     restart: unless-stopped
+    environment:
+      - WATCHFILES_FORCE_POLLING=true  # For hot reload in Docker
 
 networks:
   web:
     external: true
-# Define the external network 'web' to be used by the container
-# This allows the container to communicate with other services on the same network
-# Ensure that the external network 'web' is created before running this docker-compose file
