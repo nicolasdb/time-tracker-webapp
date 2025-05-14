@@ -20,11 +20,11 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
 #     && cp -r /tmp/windster/* /app/windster-reference/ \
 #     && rm -rf /tmp/windster
 
-# clone Flowbite Admin Dashboard
-RUN git clone https://github.com/themesberg/flowbite-admin-dashboard.git /tmp/flowbite \
-    && mkdir -p /app/flowbite-reference \
-    && cp -r /tmp/flowbite/* /app/flowbite-reference/ \
-    && rm -rf /tmp/flowbite
+# # clone Flowbite Admin Dashboard
+# RUN git clone https://github.com/themesberg/flowbite-admin-dashboard.git /tmp/flowbite \
+#     && mkdir -p /app/flowbite_ref \
+#     && cp -r /tmp/flowbite/* /app/flowbite_ref/ \
+#     && rm -rf /tmp/flowbite
 
 # Copy requirements and install Python dependencies
 COPY requirements.txt .

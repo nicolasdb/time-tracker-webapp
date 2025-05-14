@@ -36,8 +36,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Windster reference (pulled during Docker build)
+# reference (pulled during Docker build)
 windster-reference/
+flowbite_ref/
 
 # IDEs and editors
 .idea/
@@ -79,3 +80,6 @@ nosetests.xml
 coverage.xml
 *.cover
 .hypothesis/
+
+# Old files
+oldRef/
