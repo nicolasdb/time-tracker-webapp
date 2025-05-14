@@ -101,6 +101,178 @@
                 </button>
             </div>
         </form>
+        
+        <!-- System Diagnostics -->
+        <div class="mt-10">
+            <h2 class="text-lg font-medium text-gray-900 mb-4">System Diagnostics</h2>
+            
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h3 class="text-md font-medium text-gray-900 mb-2">Database Connection Status</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div id="supabase-connection-status" class="p-3 bg-white rounded-lg border">
+                        <div class="flex items-center">
+                            <div id="supabase-status-indicator" class="w-3 h-3 rounded-full mr-2 bg-gray-300"></div>
+                            <p class="text-sm font-medium">Supabase Connection: <span id="supabase-status-text">Checking...</span></p>
+                        </div>
+                    </div>
+                    
+                    <div id="api-connection-status" class="p-3 bg-white rounded-lg border">
+                        <div class="flex items-center">
+                            <div id="api-status-indicator" class="w-3 h-3 rounded-full mr-2 bg-gray-300"></div>
+                            <p class="text-sm font-medium">API Status: <span id="api-status-text">Checking...</span></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3 class="text-md font-medium text-gray-900 mb-2">Table Status</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div id="tag-assignments-status" class="p-3 bg-white rounded-lg border">
+                        <p class="text-sm font-medium">Tag Assignments Table: <span id="tag-assignments-count">Loading...</span></p>
+                    </div>
+                    
+                    <div id="rfid-events-status" class="p-3 bg-white rounded-lg border">
+                        <p class="text-sm font-medium">RFID Events Table: <span id="rfid-events-count">Loading...</span></p>
+                    </div>
+                    
+                    <div id="time-blocks-status" class="p-3 bg-white rounded-lg border">
+                        <p class="text-sm font-medium">Time Blocks View: <span id="time-blocks-count">Loading...</span></p>
+                    </div>
+                    
+                    <div id="device-assignments-status" class="p-3 bg-white rounded-lg border">
+                        <p class="text-sm font-medium">Device Assignments Table: <span id="device-assignments-count">Loading...</span></p>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <button
+                        hx-get="/api/diagnostics"
+                        hx-trigger="click"
+                        hx-target="#diagnostics-result"
+                        hx-indicator="#diagnostics-indicator"
+                        class="px-4 py-2 text-sm font-medium text-white bg-cyan-600 rounded-lg hover:bg-cyan-700 focus:ring-4 focus:ring-cyan-200"
+                    >
+                        Run Diagnostics
+                    </button>
+                    <button
+                        hx-get="/diagnostics"
+                        hx-trigger="click"
+                        hx-target="#diagnostics-result"
+                        hx-indicator="#diagnostics-indicator"
+                        class="ml-2 px-4 py-2 text-sm font-medium text-white bg-gray-600 rounded-lg hover:bg-gray-700 focus:ring-4 focus:ring-gray-200"
+                    >
+                        Test Endpoint
+                    </button>
+                    <span id="diagnostics-indicator" class="htmx-indicator ml-2">
+                        Checking...
+                    </span>
+                </div>
+                
+                <div id="diagnostics-result" class="mt-4 p-4 bg-white rounded-lg border">
+                    <p class="text-sm text-gray-500">Run diagnostics to check system status</p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<script>
+    // Simple function to check the database connection when the page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        // Fetch diagnostics data
+        fetch('/api/diagnostics')
+            .then(response => {
+                if (!response.ok) {
+                    // Try fallback endpoint
+                    console.log('Primary diagnostics endpoint failed, trying fallback...');
+                    return fetch('/api/diagnostics-test').then(r => {
+                        if (r.ok) {
+                            // If fallback works, return a basic status with troubleshooting info
+                            return { 
+                                supabase_connection: false,
+                                api_status: true,
+                                table_counts: {
+                                    tag_assignments: '?',
+                                    rfid_events: '?',
+                                    time_blocks: '?',
+                                    device_assignments: '?'
+                                },
+                                message: "Primary diagnostics endpoint not available. Check API router configuration."
+                            };
+                        } else {
+                            // Try second fallback at root level
+                            return fetch('/diagnostics').then(r2 => {
+                                if (r2.ok) {
+                                    return r2.json();
+                                } else {
+                                    throw new Error('All diagnostics endpoints failed');
+                                }
+                            });
+                        }
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Update supabase connection status
+                const supabaseIndicator = document.getElementById('supabase-status-indicator');
+                const supabaseText = document.getElementById('supabase-status-text');
+                
+                if (data.supabase_connection) {
+                    supabaseIndicator.classList.remove('bg-gray-300', 'bg-red-500');
+                    supabaseIndicator.classList.add('bg-green-500');
+                    supabaseText.textContent = 'Connected';
+                } else {
+                    supabaseIndicator.classList.remove('bg-gray-300', 'bg-green-500');
+                    supabaseIndicator.classList.add('bg-red-500');
+                    supabaseText.textContent = 'Disconnected';
+                }
+                
+                // Update API status
+                const apiIndicator = document.getElementById('api-status-indicator');
+                const apiText = document.getElementById('api-status-text');
+                
+                if (data.api_status) {
+                    apiIndicator.classList.remove('bg-gray-300', 'bg-red-500');
+                    apiIndicator.classList.add('bg-green-500');
+                    apiText.textContent = 'Online';
+                } else {
+                    apiIndicator.classList.remove('bg-gray-300', 'bg-green-500');
+                    apiIndicator.classList.add('bg-red-500');
+                    apiText.textContent = 'Offline';
+                }
+                
+                // Update table counts
+                document.getElementById('tag-assignments-count').textContent = 
+                    data.table_counts.tag_assignments + ' records';
+                document.getElementById('rfid-events-count').textContent = 
+                    data.table_counts.rfid_events + ' records';
+                document.getElementById('time-blocks-count').textContent = 
+                    data.table_counts.time_blocks + ' records';
+                document.getElementById('device-assignments-count').textContent = 
+                    data.table_counts.device_assignments + ' records';
+            })
+            .catch(error => {
+                console.error('Error fetching diagnostics:', error);
+                // Update indicators to show error state
+                const indicators = document.querySelectorAll('[id$="-indicator"]');
+                const statusTexts = document.querySelectorAll('[id$="-text"]');
+                const countElements = document.querySelectorAll('[id$="-count"]');
+                
+                indicators.forEach(indicator => {
+                    indicator.classList.remove('bg-gray-300', 'bg-green-500');
+                    indicator.classList.add('bg-red-500');
+                });
+                
+                statusTexts.forEach(text => {
+                    text.textContent = 'Error';
+                });
+                
+                countElements.forEach(element => {
+                    element.textContent = 'Error fetching data';
+                });
+            });
+    });
+</script>
 {% endblock %}

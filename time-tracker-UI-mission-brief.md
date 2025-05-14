@@ -21,8 +21,8 @@ Convert the Time Tracker Journey from Streamlit to FastAPI + HTMX + Tailwind CSS
 **Boss Name:** Datablix, Master of Pipelines
 
 **Victory Conditions:**
-- [ ] Tag management CRUD operations functional
 - [ ] RFID event tracking and manual adjustment capabilities
+- [ ] Tag management CRUD operations functional
 - [ ] Webhook integration for NFC device events
 - [ ] Data persistence confirmed in Supabase
 

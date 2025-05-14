@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Create RFID Event - Time Tracker Journey{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-semibold text-gray-900">Create Manual RFID Event</h1>
+        <a href="/rfid_events" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 focus:ring-4 focus:ring-gray-100">
+            Cancel
+        </a>
+    </div>
+    
+    <!-- Event Form -->
+    <div class="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8 mb-6">
+        <form action="/rfid_events/create" method="POST">
+            <div class="grid gap-6 mb-6 md:grid-cols-2">
+                <div>
+                    <label for="tag_uid" class="block mb-2 text-sm font-medium text-gray-900">Tag UID</label>
+                    <input type="text" id="tag_uid" name="tag_uid" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5" placeholder="04:A2:B3:C4:D5:E6" required>
+                </div>
+                <div>
+                    <label for="event_type" class="block mb-2 text-sm font-medium text-gray-900">Event Type</label>
+                    <select id="event_type" name="event_type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5" required>
+                        <option value="placed">Placed</option>
+                        <option value="removed">Removed</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="timestamp" class="block mb-2 text-sm font-medium text-gray-900">Timestamp</label>
+                    <input type="datetime-local" id="timestamp" name="timestamp" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5" required>
+                </div>
+                <div>
+                    <label for="notes" class="block mb-2 text-sm font-medium text-gray-900">Notes</label>
+                    <input type="text" id="notes" name="notes" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5" placeholder="Optional notes">
+                </div>
+            </div>
+            <div class="flex justify-end">
+                <button type="submit" class="px-5 py-2.5 text-sm font-medium text-white bg-cyan-600 rounded-lg hover:bg-cyan-700 focus:ring-4 focus:ring-cyan-200">Create Event</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

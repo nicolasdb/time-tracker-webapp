@@ -6,6 +6,7 @@ from pathlib import Path
 import os
 
 from routers import auth, dashboard, tags, rfid_events
+from routers.api import router as api_router
 
 app = FastAPI(
     title="Time Tracker Journey",
@@ -31,9 +32,27 @@ app.state.templates = templates
 
 # Include routers
 app.include_router(auth.router)
-app.include_router(dashboard.router, prefix="/dashboard")
+app.include_router(dashboard.router)  # Remove the prefix here since it's already in the router
 app.include_router(tags.router)
 app.include_router(rfid_events.router)
+app.include_router(api_router)
+
+# Direct diagnostics endpoint for testing
+@app.get("/diagnostics")
+async def root_diagnostics():
+    """Root-level diagnostics endpoint"""
+    return {
+        "status": "ok",
+        "message": "Root diagnostics endpoint working", 
+        "supabase_connection": False,
+        "api_status": True,
+        "table_counts": {
+            "tag_assignments": '?',
+            "rfid_events": '?',
+            "time_blocks": '?',
+            "device_assignments": '?'
+        }
+    }
 
 @app.get("/")
 async def root(request: Request):

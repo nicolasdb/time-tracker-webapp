@@ -1,7 +1,7 @@
 {
   "name": "time-tracker-journey",
   "version": "1.0.0",
-  "description": "Time Tracker Journey UI with FastAPI and Windster",
+  "description": "Time Tracker Journey UI with FastAPI, HTMX, and Tailwind CSS",
   "scripts": {
     "build:css": "tailwindcss -i ./static/src/main.css -o ./static/css/main.css",
     "watch:css": "tailwindcss -i ./static/src/main.css -o ./static/css/main.css --watch"
@@ -15,5 +15,9 @@
     "tailwindcss": "^3.0.18",
     "postcss": "^8.3.9",
     "autoprefixer": "^10.3.7"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
   }
 }

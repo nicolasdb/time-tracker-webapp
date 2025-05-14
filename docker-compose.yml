@@ -1,4 +1,4 @@
-version: '3'
+# Docker Compose configuration for Time Tracker
 
 services:
   webapp:
@@ -11,12 +11,21 @@ services:
     networks:
       - web
     volumes:
-      - ./app:/app
+      - ./app:/app:delegated  # Bind mount for development
+      - /app/node_modules     # Exclude node_modules from bind mount
+      # - /app/windster-reference # Exclude windster-reference from bind mount
     env_file:
       - ./app/.env
     restart: unless-stopped
     environment:
       - WATCHFILES_FORCE_POLLING=true  # For hot reload in Docker
+    # Set up a healthcheck to make sure the service is running properly
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
 networks:
   web:

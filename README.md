@@ -25,7 +25,7 @@ A FastAPI-based web application for tracking time using NFC/RFID tags, providing
 - Docker and docker-compose
 - Supabase account (for database)
 
-### Installation
+### Quick Start
 
 1. Clone the repository:
    ```
@@ -47,6 +47,17 @@ A FastAPI-based web application for tracking time using NFC/RFID tags, providing
 
 5. Access the application at http://localhost:8000
 
+For more detailed information about the Docker setup, see [DOCKER_SETUP.md](DOCKER_SETUP.md).
+
+## Improved Docker Configuration
+
+The application uses an improved Docker configuration that:
+
+- Pulls the Windster dashboard template during build (no need to commit it)
+- Uses bind mounts for efficient development
+- Automatically builds Tailwind CSS
+- Includes health checks for monitoring
+
 ## Project Structure
 
 ```
@@ -64,9 +75,38 @@ app/
 ├── routers/             # FastAPI routers
 ├── models/              # Pydantic models
 ├── services/            # Business logic
+│   └── supabase.py      # Supabase authentication service
 ├── main.py              # Main application entry
 └── requirements.txt     # Python dependencies
 ```
+
+## Project Roadmap
+
+The project is organized into four levels of development:
+
+### Level 1: Foundation ✅
+- ✅ FastAPI + HTMX + Tailwind CSS environment with Docker
+- ✅ User authentication system with Supabase
+- ✅ Basic navigation structure
+- ✅ Project skeleton connected to Supabase
+
+### Level 2: Data Flow (In Progress)
+- 🔄 Tag management CRUD operations
+- ⏳ RFID event tracking and manual adjustment (Next up!)
+- ⏳ Webhook integration for NFC device events
+- ⏳ Data persistence in Supabase
+
+### Level 3: Visualization (Upcoming)
+- Time tracking dashboard with daily/weekly views
+- Project breakdown charts
+- Focus session metrics
+- Responsive design
+
+### Level 4: Integration (Upcoming)
+- Reflection system integration
+- Complete data synchronization
+- Cognitive Wealth metrics
+- End-to-end user flow optimization
 
 ## Contributing
 

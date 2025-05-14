@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Create Tag - Time Tracker Journey{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-semibold text-gray-900">Create New Tag</h1>
+        <a href="/tags" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 focus:ring-4 focus:ring-gray-100">
+            Cancel
+        </a>
+    </div>
+    
+    <!-- Tag Form -->
+    <div class="bg-white shadow rounded-lg p-4 sm:p-6 xl:p-8 mb-6">
+        <form action="/tags/create" method="POST">
+            <div class="grid gap-6 mb-6 md:grid-cols-2">
+                <div>
+                    <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Tag Name</label>
+                    <input type="text" id="name" name="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5" placeholder="Work, Study, etc." required>
+                </div>
+                <div>
+                    <label for="uid" class="block mb-2 text-sm font-medium text-gray-900">UID</label>
+                    <input type="text" id="uid" name="uid" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5" placeholder="04:A2:B3:C4:D5:E6" value="{{ request.query_params.get('uid', '') }}" required>
+                </div>
+                <div>
+                    <label for="project" class="block mb-2 text-sm font-medium text-gray-900">Project</label>
+                    <input type="text" id="project" name="project" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5" placeholder="Project name" required>
+                </div>
+                <div>
+                    <label for="color" class="block mb-2 text-sm font-medium text-gray-900">Color</label>
+                    <select id="color" name="color" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5" required>
+                        <option value="bg-red-500">Red</option>
+                        <option value="bg-green-500">Green</option>
+                        <option value="bg-blue-500">Blue</option>
+                        <option value="bg-yellow-500">Yellow</option>
+                        <option value="bg-purple-500">Purple</option>
+                        <option value="bg-pink-500">Pink</option>
+                        <option value="bg-cyan-500">Cyan</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex justify-end">
+                <button type="submit" class="px-5 py-2.5 text-sm font-medium text-white bg-cyan-600 rounded-lg hover:bg-cyan-700 focus:ring-4 focus:ring-cyan-200">Create Tag</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
