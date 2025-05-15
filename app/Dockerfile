@@ -2,31 +2,17 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install system dependencies
+# Install only the essentials
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
     curl \
-    git \
     && rm -rf /var/lib/apt/lists/*
-
-# Install Node.js and npm
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
-    && apt-get install -y nodejs \
-    && npm --version
 
 # Copy requirements and install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy package.json and install npm dependencies for Tailwind
-COPY package.json .
-RUN npm install
-
 # Copy application code - this will be replaced with bind mount in development
 COPY . .
-
-# Build Tailwind CSS
-RUN npx tailwindcss -i ./static/src/main.css -o ./static/css/main.css
 
 # Expose ports for FastAPI
 EXPOSE 8000
