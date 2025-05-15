@@ -321,18 +321,18 @@
             
             <div class="mt-6">
                 <h3 class="text-lg font-medium mb-2">Modal Example</h3>
-                <button class="btn" onclick="my_modal_1.showModal()">Open modal</button>
-                <dialog id="my_modal_1" class="modal">
+                <label for="my-modal" class="btn">Open modal</label>
+                <input type="checkbox" id="my-modal" class="modal-toggle" />
+                <div class="modal">
                     <div class="modal-box">
                         <h3 class="font-bold text-lg">Modal Title</h3>
                         <p class="py-4">This is a modal dialog example from daisyUI.</p>
                         <div class="modal-action">
-                            <form method="dialog">
-                                <button class="btn">Close</button>
-                            </form>
+                            <label for="my-modal" class="btn">Close</label>
                         </div>
                     </div>
-                </dialog>
+                    <label class="modal-backdrop" for="my-modal">Close</label>
+                </div>
             </div>
         </div>
     </div>
@@ -353,18 +353,18 @@
                 <div>
                     <h3 class="text-lg font-medium mb-2">Loading Spinners</h3>
                     <div class="flex gap-4">
-                        <span class="loading loading-spinner loading-xs"></span>
-                        <span class="loading loading-spinner loading-sm"></span>
-                        <span class="loading loading-spinner loading-md"></span>
+                        <button class="btn btn-sm loading">Loading</button>
+                        <button class="btn btn-circle loading"></button>
                         <span class="loading loading-spinner loading-lg"></span>
+                        <div class="radial-progress animate-spin" style="--value:70;"></div>
                     </div>
                     
-                    <h3 class="text-lg font-medium mb-2 mt-4">Loading Variations</h3>
-                    <div class="flex gap-4">
-                        <span class="loading loading-dots loading-md"></span>
-                        <span class="loading loading-ring loading-md"></span>
-                        <span class="loading loading-ball loading-md"></span>
-                        <span class="loading loading-bars loading-md"></span>
+                    <h3 class="text-lg font-medium mb-2 mt-4">Progress Bars</h3>
+                    <div class="flex flex-wrap gap-4">
+                        <progress class="progress progress-primary w-24"></progress>
+                        <progress class="progress progress-secondary w-24"></progress>
+                        <progress class="progress progress-accent w-24"></progress>
+                        <progress class="progress progress-info w-24"></progress>
                     </div>
                 </div>
             </div>
