@@ -11,6 +11,7 @@
             <p>Check the status of various system components and services.</p>
             <div class="card-actions justify-end">
                 <a href="/ui" class="btn btn-primary">View UI Components</a>
+                <a href="/rfid-events/" class="btn btn-accent">RFID Events</a>
             </div>
         </div>
     </div>
@@ -109,8 +110,8 @@
                     <div class="card-body p-4">
                         <h3 class="card-title text-base">Database</h3>
                         <div class="flex flex-col gap-2 mt-2">
-                            <button class="btn btn-sm btn-primary" onclick="logMessage('info', 'Database check initiated')">Check Database</button>
-                            <button class="btn btn-sm btn-warning" onclick="logMessage('warning', 'Database reset not implemented yet')">Reset Database</button>
+                            <button class="btn btn-sm btn-primary" onclick="checkSupabase()">Check Database</button>
+                            <button class="btn btn-sm btn-warning" onclick="setupDatabase()">Setup Database</button>
                         </div>
                     </div>
                 </div>
@@ -145,6 +146,7 @@
     // Automatically check health on page load
     document.addEventListener('DOMContentLoaded', function() {
         checkHealth();
+        checkSupabase();
     });
     
     // Check API health
@@ -171,26 +173,51 @@
             });
     }
     
-    // Check Supabase connection (placeholder)
+    // Check Supabase connection
     function checkSupabase() {
         const supabaseStatus = document.getElementById('supabase-status');
         supabaseStatus.className = 'badge badge-warning gap-2';
         supabaseStatus.innerText = 'Checking...';
         
-        // Simulating a check since we don't have actual connection yet
-        setTimeout(() => {
-            // Random success/fail for demonstration
-            const success = Math.random() > 0.3;
-            if (success) {
-                supabaseStatus.className = 'badge badge-success gap-2';
-                supabaseStatus.innerText = 'Connected';
-                logMessage('success', 'Supabase connection successful');
-            } else {
+        // Actual check using our endpoint
+        fetch('/rfid-events/check-connection')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    supabaseStatus.className = 'badge badge-success gap-2';
+                    supabaseStatus.innerText = 'Connected';
+                    logMessage('success', `Supabase connection successful. Found ${data.count} RFID events.`);
+                } else {
+                    supabaseStatus.className = 'badge badge-error gap-2';
+                    supabaseStatus.innerText = 'Failed';
+                    logMessage('error', 'Supabase connection failed: ' + data.message);
+                }
+            })
+            .catch(error => {
                 supabaseStatus.className = 'badge badge-error gap-2';
-                supabaseStatus.innerText = 'Failed';
-                logMessage('error', 'Supabase connection failed - check credentials');
-            }
-        }, 1000);
+                supabaseStatus.innerText = 'Error';
+                logMessage('error', 'Supabase connection error: ' + error.message);
+            });
+    }
+    
+    // Set up database
+    function setupDatabase() {
+        logMessage('info', 'Setting up database tables and views...');
+        
+        fetch('/rfid-events/setup-database', {
+            method: 'POST'
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    logMessage('success', data.message);
+                } else {
+                    logMessage('error', 'Database setup failed: ' + data.message);
+                }
+            })
+            .catch(error => {
+                logMessage('error', 'Database setup error: ' + error.message);
+            });
     }
     
     // Debug console log function

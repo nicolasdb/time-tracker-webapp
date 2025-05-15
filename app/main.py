@@ -31,6 +31,10 @@ templates = Jinja2Templates(directory="templates")
 # Store templates in app state for access in routers
 app.state.templates = templates
 
+# Import routers after app is initialized
+from routers import rfid_events
+app.include_router(rfid_events.router)
+
 @app.get("/")
 async def home(request: Request):
     """Home page with diagnostic information"""
