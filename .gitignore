@@ -51,6 +51,7 @@ flowbite_ref/
 *.launch
 .settings/
 *.sublime-workspace
+.mcp.json
 
 # Distribution / packaging
 .Python
