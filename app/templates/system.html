@@ -1,0 +1,261 @@
+{% extends "base.html" %}
+
+{% block title %}System Diagnostics - Time Tracker{% endblock %}
+
+{% block content %}
+<div class="grid gap-6">
+    <!-- Header section -->
+    <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+            <h2 class="card-title text-2xl">System Diagnostics</h2>
+            <p>Check the status of various system components and services.</p>
+            <div class="card-actions justify-end">
+                <a href="/ui" class="btn btn-primary">View UI Components</a>
+                <a href="/" class="btn btn-accent">Home</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Status section -->
+    <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+            <h2 class="card-title">System Status</h2>
+            <div class="overflow-x-auto">
+                <table class="table table-zebra w-full">
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- API Health -->
+                        <tr>
+                            <td>API Health</td>
+                            <td>
+                                <div id="health-status" class="badge badge-info gap-2">
+                                    Checking...
+                                </div>
+                            </td>
+                            <td>
+                                <button class="btn btn-xs btn-primary" onclick="checkHealth()">
+                                    Check
+                                </button>
+                            </td>
+                        </tr>
+                        
+                        <!-- Supabase Connection -->
+                        <tr>
+                            <td>Supabase Connection</td>
+                            <td>
+                                <div id="supabase-status" class="badge badge-warning gap-2">
+                                    Not Checked
+                                </div>
+                            </td>
+                            <td>
+                                <button class="btn btn-xs btn-primary" onclick="checkSupabase()">
+                                    Check
+                                </button>
+                            </td>
+                        </tr>
+                        
+                        <!-- Journey Service (future) -->
+                        <tr>
+                            <td>Journey Service</td>
+                            <td>
+                                <div id="journey-status" class="badge badge-secondary gap-2">
+                                    Not Implemented
+                                </div>
+                            </td>
+                            <td>
+                                <button class="btn btn-xs btn-disabled">
+                                    Check
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Debug Console -->
+    <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="card-title">Debug Console</h2>
+                <button id="clear-logs" class="btn btn-sm btn-outline">Clear Logs</button>
+            </div>
+            
+            <div id="debug-console" class="bg-base-300 p-4 rounded-lg h-64 overflow-y-auto font-mono text-sm">
+                <div class="text-info">Debug console initialized. Log messages will appear here.</div>
+            </div>
+            
+            <div class="flex flex-wrap gap-2 mt-4">
+                <button class="btn btn-sm btn-primary" onclick="logMessage('info', 'Test info message')">Log Info</button>
+                <button class="btn btn-sm btn-warning" onclick="logMessage('warning', 'Test warning message')">Log Warning</button>
+                <button class="btn btn-sm btn-error" onclick="logMessage('error', 'Test error message')">Log Error</button>
+                <button class="btn btn-sm btn-success" onclick="logMessage('success', 'Test success message')">Log Success</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+            <h2 class="card-title">Quick Actions</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-2">
+                <div class="card bg-base-200">
+                    <div class="card-body p-4">
+                        <h3 class="card-title text-base">Database</h3>
+                        <div class="flex flex-col gap-2 mt-2">
+                            <button class="btn btn-sm btn-primary" onclick="checkSupabase()">Check Database</button>
+                            <button class="btn btn-sm btn-warning" onclick="setupDatabase()">Setup Database</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card bg-base-200">
+                    <div class="card-body p-4">
+                        <h3 class="card-title text-base">RFID Simulation</h3>
+                        <div class="flex flex-col gap-2 mt-2">
+                            <button class="btn btn-sm btn-primary" onclick="logMessage('info', 'Simulating RFID tag placement')">Simulate Tag Place</button>
+                            <button class="btn btn-sm btn-primary" onclick="logMessage('info', 'Simulating RFID tag removal')">Simulate Tag Remove</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card bg-base-200">
+                    <div class="card-body p-4">
+                        <h3 class="card-title text-base">Services</h3>
+                        <div class="flex flex-col gap-2 mt-2">
+                            <button class="btn btn-sm btn-primary" onclick="logMessage('info', 'Testing service connectivity')">Test Services</button>
+                            <button class="btn btn-sm btn-primary" onclick="logMessage('info', 'External API check started')">Check External APIs</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Automatically check health on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        checkHealth();
+        checkSupabase();
+    });
+    
+    // Check API health
+    function checkHealth() {
+        fetch('/health')
+            .then(response => response.json())
+            .then(data => {
+                const healthStatus = document.getElementById('health-status');
+                if (data.status === 'healthy') {
+                    healthStatus.className = 'badge badge-success gap-2';
+                    healthStatus.innerText = 'Healthy';
+                    logMessage('success', 'API health check: System is healthy');
+                } else {
+                    healthStatus.className = 'badge badge-error gap-2';
+                    healthStatus.innerText = 'Unhealthy';
+                    logMessage('error', 'API health check failed: ' + data.status);
+                }
+            })
+            .catch(error => {
+                const healthStatus = document.getElementById('health-status');
+                healthStatus.className = 'badge badge-error gap-2';
+                healthStatus.innerText = 'Error';
+                logMessage('error', 'API health check error: ' + error.message);
+            });
+    }
+    
+    // Check Supabase connection
+    function checkSupabase() {
+        const supabaseStatus = document.getElementById('supabase-status');
+        supabaseStatus.className = 'badge badge-warning gap-2';
+        supabaseStatus.innerText = 'Checking...';
+        
+        // Actual check using our endpoint
+        fetch('/rfid-events/check-connection')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    supabaseStatus.className = 'badge badge-success gap-2';
+                    supabaseStatus.innerText = 'Connected';
+                    logMessage('success', `Supabase connection successful. Found ${data.count} RFID events.`);
+                } else {
+                    supabaseStatus.className = 'badge badge-error gap-2';
+                    supabaseStatus.innerText = 'Failed';
+                    logMessage('error', 'Supabase connection failed: ' + data.message);
+                }
+            })
+            .catch(error => {
+                supabaseStatus.className = 'badge badge-error gap-2';
+                supabaseStatus.innerText = 'Error';
+                logMessage('error', 'Supabase connection error: ' + error.message);
+            });
+    }
+    
+    // Set up database
+    function setupDatabase() {
+        logMessage('info', 'Setting up database tables and views...');
+        
+        fetch('/rfid-events/setup-database', {
+            method: 'POST'
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    logMessage('success', data.message);
+                } else {
+                    logMessage('error', 'Database setup failed: ' + data.message);
+                }
+            })
+            .catch(error => {
+                logMessage('error', 'Database setup error: ' + error.message);
+            });
+    }
+    
+    // Debug console log function
+    function logMessage(type, message) {
+        const console = document.getElementById('debug-console');
+        const timestamp = new Date().toLocaleTimeString();
+        let className = '';
+        
+        switch (type) {
+            case 'info':
+                className = 'text-info';
+                break;
+            case 'warning':
+                className = 'text-warning';
+                break;
+            case 'error':
+                className = 'text-error';
+                break;
+            case 'success':
+                className = 'text-success';
+                break;
+            default:
+                className = 'text-base-content';
+        }
+        
+        const logEntry = document.createElement('div');
+        logEntry.className = className;
+        logEntry.innerHTML = `[${timestamp}] [${type.toUpperCase()}] ${message}`;
+        console.appendChild(logEntry);
+        
+        // Auto-scroll to bottom
+        console.scrollTop = console.scrollHeight;
+    }
+    
+    // Clear logs button
+    document.getElementById('clear-logs').addEventListener('click', function() {
+        const console = document.getElementById('debug-console');
+        console.innerHTML = '<div class="text-info">Debug console cleared.</div>';
+    });
+</script>
+{% endblock %}

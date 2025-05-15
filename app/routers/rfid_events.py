@@ -12,15 +12,8 @@ router = APIRouter(
     tags=["rfid_events"],
 )
 
-@router.get("/", response_class=HTMLResponse)
-async def list_events(
-    request: Request,
-    page: int = 1,
-    limit: int = 12
-):
-    """Render the RFID events page showing all events from the live_board view."""
-    templates = request.app.state.templates
-    
+async def get_events_data(page: int = 1, limit: int = 12):
+    """Get data for RFID events page, to be used by both /rfid-events and homepage"""
     # Calculate offset
     offset = (page - 1) * limit
     
@@ -39,45 +32,56 @@ async def list_events(
         total_count = connection_status.get("count", 0) if connection_status.get("status") == "success" else 0
         total_pages = (total_count + limit - 1) // limit if total_count > 0 else 1
         
-        return templates.TemplateResponse(
-            "rfid_events.html",
-            {
-                "request": request,
-                "title": "RFID Live Board",
-                "events": events,
-                "time_blocks": time_blocks,
-                "active_session": active_session,
-                "connection_status": connection_status,
-                "pagination": {
-                    "page": page,
-                    "limit": limit,
-                    "total": total_count,
-                    "pages": total_pages
-                }
+        return {
+            "events": events,
+            "time_blocks": time_blocks,
+            "active_session": active_session,
+            "connection_status": connection_status,
+            "pagination": {
+                "page": page,
+                "limit": limit,
+                "total": total_count,
+                "pages": total_pages
             }
-        )
+        }
     except Exception as e:
         logger.error(f"Error fetching RFID events: {e}")
-        return templates.TemplateResponse(
-            "rfid_events.html",
-            {
-                "request": request,
-                "title": "RFID Live Board",
-                "events": [],
-                "time_blocks": [],
-                "active_session": None,
-                "connection_status": {
-                    "status": "error",
-                    "message": f"Failed to fetch RFID events: {str(e)}"
-                },
-                "pagination": {
-                    "page": page,
-                    "limit": limit,
-                    "total": 0,
-                    "pages": 1
-                }
+        return {
+            "events": [],
+            "time_blocks": [],
+            "active_session": None,
+            "connection_status": {
+                "status": "error",
+                "message": f"Failed to fetch RFID events: {str(e)}"
+            },
+            "pagination": {
+                "page": page,
+                "limit": limit,
+                "total": 0,
+                "pages": 1
             }
-        )
+        }
+
+@router.get("/", response_class=HTMLResponse)
+async def list_events(
+    request: Request,
+    page: int = 1,
+    limit: int = 12
+):
+    """Render the RFID events page showing all events from the live_board view."""
+    templates = request.app.state.templates
+    
+    # Get events data
+    events_data = await get_events_data(page=page, limit=limit)
+    
+    return templates.TemplateResponse(
+        "index.html",  # Updated to use the new template name
+        {
+            "request": request,
+            "title": "RFID Live Board",
+            **events_data
+        }
+    )
 
 @router.get("/check-connection")
 async def check_supabase_connection():

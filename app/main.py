@@ -35,9 +35,9 @@ app.state.templates = templates
 from routers import rfid_events
 app.include_router(rfid_events.router)
 
-@app.get("/")
-async def home(request: Request):
-    """Home page with diagnostic information"""
+@app.get("/system")
+async def system(request: Request):
+    """System diagnostics page"""
     # System information
     system_info = {
         "python_version": sys.version,
@@ -58,7 +58,7 @@ async def home(request: Request):
         packages = ["Could not retrieve package information"]
     
     return templates.TemplateResponse(
-        "index.html",
+        "system.html",
         {
             "request": request,
             "title": "System Diagnostics",
@@ -67,6 +67,44 @@ async def home(request: Request):
             "packages": packages
         }
     )
+
+@app.get("/")
+async def home(request: Request):
+    """Homepage showing RFID events"""
+    # This route now serves the RFID events page as the homepage
+    try:
+        from routers.rfid_events import get_events_data
+        events_data = await get_events_data()
+        
+        return templates.TemplateResponse(
+            "index.html",
+            {
+                "request": request,
+                "title": "RFID Live Board",
+                **events_data
+            }
+        )
+    except Exception as e:
+        import logging
+        logging.error(f"Error rendering homepage: {e}")
+        return templates.TemplateResponse(
+            "index.html",
+            {
+                "request": request,
+                "title": "RFID Live Board",
+                "events": [],
+                "connection_status": {
+                    "status": "error",
+                    "message": f"Failed to load homepage: {str(e)}"
+                },
+                "pagination": {
+                    "page": 1,
+                    "limit": 12,
+                    "total": 0,
+                    "pages": 1
+                }
+            }
+        )
 
 @app.get("/health")
 async def health_check():
