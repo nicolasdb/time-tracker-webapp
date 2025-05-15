@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Time Tracker Journey{% endblock %}
+{% block header %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- Summary cards -->
+<div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-6">
+    <!-- Time Today -->
+    <div class="p-4 bg-white border">
+        <div class="text-2xl font-bold">{{ data.total_hours_today }}</div>
+        <div class="text-gray-600">Hours tracked today</div>
+    </div>
+    
+    <!-- Time This Week -->
+    <div class="p-4 bg-white border">
+        <div class="text-2xl font-bold">{{ data.total_hours_week }}</div>
+        <div class="text-gray-600">Hours tracked this week</div>
+    </div>
+    
+    <!-- Projects -->
+    <div class="p-4 bg-white border">
+        <div class="text-2xl font-bold">{{ data.projects|length }}</div>
+        <div class="text-gray-600">Active projects</div>
+    </div>
+    
+    <!-- Tags -->
+    <div class="p-4 bg-white border">
+        <div class="text-2xl font-bold">{{ data.tags_count|default(0) }}</div>
+        <div class="text-gray-600">Registered tags</div>
+    </div>
+</div>
+
+<!-- Main sections -->
+<div class="grid gap-6 grid-cols-1 lg:grid-cols-2 mb-6">
+    <!-- Project Breakdown -->
+    <div class="p-4 bg-white border">
+        <h2 class="text-lg font-medium mb-4">Project Breakdown</h2>
+        <table class="w-full">
+            <thead>
+                <tr class="border-b">
+                    <th class="text-left py-2">Project</th>
+                    <th class="text-left py-2">Hours</th>
+                    <th class="text-left py-2">%</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for project in data.projects %}
+                <tr class="border-b">
+                    <td class="py-2">{{ project.name }}</td>
+                    <td class="py-2">{{ project.hours }}</td>
+                    <td class="py-2">{{ project.percentage }}%</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Recent Activities -->
+    <div class="p-4 bg-white border">
+        <h2 class="text-lg font-medium mb-4">Recent Activities</h2>
+        <table class="w-full">
+            <thead>
+                <tr class="border-b">
+                    <th class="text-left py-2">Project</th>
+                    <th class="text-left py-2">Duration</th>
+                    <th class="text-left py-2">Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for activity in data.recent_activities %}
+                <tr class="border-b">
+                    <td class="py-2">{{ activity.project }}</td>
+                    <td class="py-2">{{ activity.duration }}</td>
+                    <td class="py-2">{{ activity.timestamp }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Weekly Time Distribution -->
+<div class="p-4 bg-white border mb-6">
+    <h2 class="text-lg font-medium mb-4">Weekly Time Distribution</h2>
+    <div class="grid grid-cols-7 gap-2 text-center">
+        <div>Mon</div>
+        <div>Tue</div>
+        <div>Wed</div>
+        <div>Thu</div>
+        <div>Fri</div>
+        <div>Sat</div>
+        <div>Sun</div>
+        
+        <div>4.2h</div>
+        <div>5.1h</div>
+        <div>6.5h</div>
+        <div>7.8h</div>
+        <div>3.2h</div>
+        <div>2.5h</div>
+        <div>3.2h</div>
+    </div>
+</div>
+{% endblock %}

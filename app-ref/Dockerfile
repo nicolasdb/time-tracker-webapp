@@ -14,6 +14,18 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y nodejs \
     && npm --version
 
+# # Clone Windster reference repository
+# RUN git clone https://github.com/themesberg/tailwind-dashboard-windster.git /tmp/windster \
+#     && mkdir -p /app/windster-reference \
+#     && cp -r /tmp/windster/* /app/windster-reference/ \
+#     && rm -rf /tmp/windster
+
+# # clone Flowbite Admin Dashboard
+# RUN git clone https://github.com/themesberg/flowbite-admin-dashboard.git /tmp/flowbite \
+#     && mkdir -p /app/flowbite_ref \
+#     && cp -r /tmp/flowbite/* /app/flowbite_ref/ \
+#     && rm -rf /tmp/flowbite
+
 # Copy requirements and install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt

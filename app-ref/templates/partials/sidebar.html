@@ -1,0 +1,101 @@
+<!-- Minimal Sidebar -->
+<aside class="w-48 bg-gray-100 border-r border-gray-200 hidden lg:block fixed inset-y-0 left-0 h-full">
+    <div class="p-4 border-b border-gray-200">
+        <h2 class="font-medium">Time Tracker</h2>
+    </div>
+    <nav class="mt-4">
+        <ul class="space-y-1">
+            <li>
+                <a href="/dashboard" class="block py-2 px-4 hover:bg-gray-200 {% if request.path == '/dashboard' %}bg-gray-200 font-medium{% endif %}">
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <a href="/tags" class="block py-2 px-4 hover:bg-gray-200 {% if request.path == '/tags' %}bg-gray-200 font-medium{% endif %}">
+                    Tags
+                </a>
+            </li>
+            <li>
+                <a href="/rfid_events" class="block py-2 px-4 hover:bg-gray-200 {% if request.path == '/rfid_events' %}bg-gray-200 font-medium{% endif %}">
+                    RFID Events
+                </a>
+            </li>
+            <li>
+                <a href="/settings" class="block py-2 px-4 hover:bg-gray-200 {% if request.path == '/settings' %}bg-gray-200 font-medium{% endif %}">
+                    Settings
+                </a>
+            </li>
+        </ul>
+        <div class="mt-8 border-t pt-4 px-4">
+            <a href="/auth/logout" class="block py-2 px-4 hover:bg-gray-200 text-red-600">
+                Logout
+            </a>
+        </div>
+    </nav>
+</aside>
+
+<!-- Mobile menu button -->
+<div class="lg:hidden fixed top-4 left-4 z-20">
+    <button id="mobile-menu-button" class="p-2 bg-white rounded border shadow">
+        Menu
+    </button>
+</div>
+
+<!-- Mobile menu (hidden by default) -->
+<div id="mobile-menu" class="fixed inset-0 z-10 bg-gray-100 hidden">
+    <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+        <h2 class="font-medium">Time Tracker</h2>
+        <button id="close-mobile-menu" class="p-2">Close</button>
+    </div>
+    <nav class="mt-4">
+        <ul class="space-y-1">
+            <li>
+                <a href="/dashboard" class="block py-2 px-4 hover:bg-gray-200">
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <a href="/tags" class="block py-2 px-4 hover:bg-gray-200">
+                    Tags
+                </a>
+            </li>
+            <li>
+                <a href="/rfid_events" class="block py-2 px-4 hover:bg-gray-200">
+                    RFID Events
+                </a>
+            </li>
+            <li>
+                <a href="/settings" class="block py-2 px-4 hover:bg-gray-200">
+                    Settings
+                </a>
+            </li>
+            <li>
+                <a href="/auth/logout" class="block py-2 px-4 hover:bg-gray-200 text-red-600">
+                    Logout
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<script>
+// Wait for the DOM to be fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const closeMobileMenuButton = document.getElementById('close-mobile-menu');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    // Show mobile menu when button is clicked
+    if (mobileMenuButton) {
+        mobileMenuButton.addEventListener('click', function() {
+            mobileMenu.classList.remove('hidden');
+        });
+    }
+    
+    // Hide mobile menu when close button is clicked
+    if (closeMobileMenuButton) {
+        closeMobileMenuButton.addEventListener('click', function() {
+            mobileMenu.classList.add('hidden');
+        });
+    }
+});
